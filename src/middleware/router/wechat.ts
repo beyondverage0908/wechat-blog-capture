@@ -1,15 +1,16 @@
 import Router from "koa-router";
 import axios from "axios";
-import cheerio from "@/util/cheerio";
+import CheerioUtil from "@/util/cheerio";
 
 const router = new Router();
 
 router.get("/capture", async (ctx) => {
   const { url } = ctx.query;
   const data = await axios.get(url as string);
-  const text = cheerio.getText(data.data);
+  const c = new CheerioUtil(data.data);
+  const selector = c.getValueBySelector("#js_content");
   ctx.body = {
-    info: text.trim(),
+    info: selector.text(),
   };
 });
 
