@@ -2,6 +2,7 @@ import Router from "koa-router";
 import home from "./home";
 import page from "./page";
 import wechat from "./wechat";
+import eastmoney from "./eastmoney";
 
 const router = new Router();
 
@@ -9,6 +10,7 @@ const router = new Router();
 router.use("/home", home.routes(), home.allowedMethods());
 router.use("/page", page.routes(), page.allowedMethods());
 router.use("/wechat", wechat.routes(), wechat.allowedMethods());
+router.use("/eastmoney", eastmoney.routes(), eastmoney.allowedMethods());
 
 // 首页
 router.get("/", (ctx) => {

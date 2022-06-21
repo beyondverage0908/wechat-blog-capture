@@ -1,6 +1,10 @@
 {
   "restartable": "rs",
-  "ignore": [".git", ".svn", "node_modules/**/node_modules"],
+  "ignore": [
+    ".git",
+    ".svn",
+    "node_modules/**/node_modules"
+  ],
   "verbose": true,
   "execMap": {
     "js": "node --harmony"
