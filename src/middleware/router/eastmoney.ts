@@ -3,6 +3,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { mainUrl } from "@/constant/urls/eastmoney";
 import { StockIndex } from "@/types/eastmoney";
+import { CtContext } from "@/types/koa";
 
 const router = new Router();
 
@@ -30,7 +31,6 @@ router.get("/hq", async (ctx) => {
     hqList.push(data);
   });
   ctx.body = {
-    code: 200,
     data: hqList,
     message: "成功",
   };
