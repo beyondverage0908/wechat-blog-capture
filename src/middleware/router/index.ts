@@ -1,10 +1,11 @@
+import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 import home from "./home";
 import page from "./page";
 import wechat from "./wechat";
 import eastmoney from "./eastmoney";
 
-const router = new Router();
+const router = new Router<DefaultState, Context>();
 
 // 添加模块的路由
 router.use("/home", home.routes(), home.allowedMethods());

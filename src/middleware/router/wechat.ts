@@ -1,8 +1,9 @@
+import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 import axios from "axios";
 import CheerioUtil from "@/util/cheerio";
 
-const router = new Router();
+const router = new Router<DefaultState, Context>();
 
 router.get("/capture", async (ctx) => {
   const { url } = ctx.query;

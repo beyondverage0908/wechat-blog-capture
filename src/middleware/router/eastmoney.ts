@@ -1,11 +1,11 @@
+import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { mainUrl } from "@/constant/urls/eastmoney";
 import { StockIndex } from "@/types/eastmoney";
-import { CtContext } from "@/types/koa";
 
-const router = new Router();
+const router = new Router<DefaultState, Context>();
 
 router.get("/hq", async (ctx) => {
   const data = await axios.get(mainUrl);
@@ -30,10 +30,7 @@ router.get("/hq", async (ctx) => {
       });
     hqList.push(data);
   });
-  ctx.body = {
-    data: hqList,
-    message: "成功",
-  };
+  ctx.success(hqList);
 });
 
 export default router;

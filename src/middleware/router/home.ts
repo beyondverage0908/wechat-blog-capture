@@ -1,6 +1,7 @@
+import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 
-const home = new Router();
+const home = new Router<DefaultState, Context>();
 
 home.get("/", async (ctx) => {
   let html = `
