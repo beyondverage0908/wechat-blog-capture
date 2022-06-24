@@ -30,6 +30,7 @@ router.get("/hq", async (ctx) => {
       });
     hqList.push(data);
   });
+
   ctx.success(hqList);
 });
 

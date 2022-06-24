@@ -16,7 +16,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["@types", "jest"]
+    "types": []
   },
   "exclude": ["node_modules", "dist"]
 }

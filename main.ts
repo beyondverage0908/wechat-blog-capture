@@ -1,5 +1,5 @@
 import Koa from "koa";
-import { useLog } from "@/middleware/log";
+import { useLog } from "@/middleware/time-log";
 import { useGlobalCatch } from "@/middleware/error-catch";
 import { useFormatResponse } from "@/middleware/response";
 import { useRoutes, useAllowedMethods } from "@/middleware/router";
