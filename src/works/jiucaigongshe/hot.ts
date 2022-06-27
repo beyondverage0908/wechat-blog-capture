@@ -23,7 +23,7 @@ export const getMainPage = async () => {
   const page = await browser.newPage();
   await page.goto(mainUrl);
   const result = await page.evaluate((target) => {
-    console.log(target);
+    console.log("------", target);
   }, mainUrl);
 
   console.log("--->> ", result);

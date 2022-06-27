@@ -16,6 +16,7 @@
     "axios": "^0.27.2",
     "cheerio": "1.0.0-rc.11",
     "dayjs": "^1.11.3",
+    "ip": "^1.1.8",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
     "koa-router": "^10.1.1",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.31",
+    "@types/ip": "^1.1.0",
     "@types/koa": "^2.13.4",
     "@types/koa-router": "^7.4.4",
     "@types/koa-static": "^4.0.2",

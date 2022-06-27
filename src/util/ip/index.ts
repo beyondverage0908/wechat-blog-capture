@@ -1,7 +1,6 @@
-import os from "os";
+import ip from "ip";
 
 // 获取ip
 export function getIp() {
-  const networkInterfaces = os.networkInterfaces();
-  return networkInterfaces.eth1!![0].address;
+  return ip.address();
 }
