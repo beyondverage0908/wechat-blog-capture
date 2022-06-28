@@ -4,7 +4,11 @@ import { Dictionary } from "@/types";
 
 export function useFormatResponse() {
   return async (ctx: Context, next: Next) => {
-    ctx.success = (data?: Dictionary, code?: string, message?: string) => {
+    ctx.success = (
+      data?: Dictionary | string,
+      code?: string,
+      message?: string
+    ) => {
       ctx.body = {
         data,
         message: message || StatusTypes.COMMON_SUCCESS_MSG,

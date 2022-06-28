@@ -6,6 +6,9 @@ import {
   getActionUrl,
   mainUrl,
 } from "@/constant/urls/jiucaigongshe";
+import date from "@/lib/date";
+import { createLogger } from "@/middleware/logger";
+const logger = createLogger("jiucaigongshe-hot");
 
 export async function getActionPage() {
   const data = await axios.get(getActionUrl());
@@ -15,18 +18,63 @@ export async function getActionPage() {
 export const getMainPage = async () => {
   // const data = await axios.get(mainUrl);
   // console.log(data.data);
-  console.log(puppeteer);
   const browser = await puppeteer.launch({
     headless: true,
     devtools: false,
   });
   const page = await browser.newPage();
-  await page.goto(mainUrl);
-  const result = await page.evaluate((target) => {
-    console.log("------", target);
-  }, mainUrl);
+  page.setViewport({
+    width: 1920,
+    height: 1080,
+  });
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    // console.log("--->>> ", request.resourceType(), request.url());
+    request.continue();
+  });
+  page.on("response", (response) => {
+    if (response.request().resourceType() === "xhr") {
+      console.log("+++>>> ", response.request().resourceType(), response.url());
+      response.json().then((res) => {
+        console.log("===>>> ", res);
+      });
+    }
+  });
+  const actionUrl = getActionUrl();
+  console.log("actionUrl: ", actionUrl);
+  await page.goto(actionUrl, { waitUntil: "load" });
+  try {
+    await page.click(".yd-tabs_item", { delay: 10 });
+    // await page.click(".jc-bline", { delay: 300 });
+  } catch (error) {
+    console.error(error);
+    logger.error(JSON.stringify(error));
+  }
 
-  console.log("--->> ", result);
+  const resultsSelector = ".module .sort-box .fs18-bold";
+  // 浏览器的上下文中执行js代码
+  const result = await page.evaluate((resultsSelector) => {
+    const modules = Array.from(document.querySelectorAll(resultsSelector));
+    return {
+      modules,
+    };
+  }, resultsSelector);
+
+  result.modules.forEach((element) => {
+    console.log(element.textContent);
+  });
+
+  // 浏览器截屏
+  await page.screenshot({
+    path: `screenshot-${Date.now()}.png`,
+    fullPage: true,
+  });
+
+  // 浏览器保存未pdf
+  // await page.pdf({
+  //   path: `pdf-${Date.now()}.pdf`,
+  //   format: "A2",
+  // });
 
   await page.close();
   await browser.close();

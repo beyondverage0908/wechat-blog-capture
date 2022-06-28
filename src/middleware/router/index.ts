@@ -4,6 +4,7 @@ import home from "./home";
 import page from "./page";
 import wechat from "./wechat";
 import eastmoney from "./eastmoney";
+import jiucaigongshe from "./jiucaigongshe";
 
 const router = new Router<DefaultState, Context>();
 
@@ -12,6 +13,11 @@ router.use("/home", home.routes(), home.allowedMethods());
 router.use("/page", page.routes(), page.allowedMethods());
 router.use("/wechat", wechat.routes(), wechat.allowedMethods());
 router.use("/eastmoney", eastmoney.routes(), eastmoney.allowedMethods());
+router.use(
+  "/jiucaigongshe",
+  jiucaigongshe.routes(),
+  jiucaigongshe.allowedMethods()
+);
 
 // 首页
 router.get("/", (ctx) => {

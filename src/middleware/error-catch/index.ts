@@ -9,6 +9,7 @@ async function globalCatch(ctx: Context, next: Next) {
   } catch (error) {
     logger.error(`${ctx.method} ${ctx.url} ${ctx.status}`);
     logger.error(JSON.stringify(error));
+    console.error(error);
   }
 }
 

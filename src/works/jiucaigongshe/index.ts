@@ -11,5 +11,5 @@ function jiuCaiGongSheJob() {
 
 export function initJiuCaiGongSheJob() {
   // getActionPage();
-  getMainPage();
+  // getMainPage();
 }
