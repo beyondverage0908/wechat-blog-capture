@@ -42,12 +42,24 @@
 1. 实践了 node_schedule 来完成定时任务的工作
 2. 通过定时任务封装获取 eastmoney 行情的数据
 
+- 20220626-20220629
+
+1. 学习了关于 Puppeteer 的一些 api，使用方式
+2. 实践了基于 Puppeteer 进行界面数据的爬取（支持模拟点击，等待异步数据）
+3. 实践了基于 Puppeteer 对韭菜公社热点异动数据的爬取
+
 ## 准备实践的图谱
 
-- [ ] 爬取韭菜公社的一些数据
-- [ ] 探索基于 Puppeteer 来进行数据爬取 [结合项目来谈谈 Puppeteer](https://zhuanlan.zhihu.com/p/76237595)
+- [x] 爬取韭菜公社的一些数据
+- [x] 探索基于 Puppeteer 来进行数据爬取
+
+  > [结合项目来谈谈 Puppeteer](https://zhuanlan.zhihu.com/p/76237595)
+
+  > [Node.js 库 Puppeteer 常用 API 及骚操作总结](https://juejin.cn/post/6844903997845962759)
+
 - [ ] 探索部署基于 ts 构建的 node 程序
-- [x] 探索定时任务的最佳实践 [Node.js 之定时任务](https://juejin.cn/post/6856586709837512718)
+- [x] 探索定时任务的最佳实践
+  > [Node.js 之定时任务](https://juejin.cn/post/6856586709837512718)
 - [ ] 探索任务队列的最佳实践
 - [ ] 探索断点调试程序，程序修改可以自启动
 - [ ] 探索基于 MongoDb 将数据落库

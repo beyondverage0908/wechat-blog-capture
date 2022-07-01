@@ -10,6 +10,7 @@ async function globalCatch(ctx: Context, next: Next) {
     logger.error(`${ctx.method} ${ctx.url} ${ctx.status}`);
     logger.error(JSON.stringify(error));
     console.error(error);
+    ctx.error("服务器异常", 500);
   }
 }
 

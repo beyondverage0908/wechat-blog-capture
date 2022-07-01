@@ -1,9 +1,4 @@
-import {
-  getCurrentHots,
-  optionsPcCount,
-  getActionPage,
-  getMainPage,
-} from "./hot";
+import { getCurrentHots } from "./hot";
 
 function jiuCaiGongSheJob() {
   getCurrentHots();

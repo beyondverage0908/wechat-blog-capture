@@ -1,23 +1,30 @@
 import axios from "axios";
-import dayjs from "dayjs";
 import puppeteer from "puppeteer";
-import {
-  countPcUrl,
-  getActionUrl,
-  mainUrl,
-} from "@/constant/urls/jiucaigongshe";
+import { getActionUrl } from "@/constant/urls/jiucaigongshe";
+import { Dictionary } from "@/types";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import date from "@/lib/date";
-import { createLogger } from "@/middleware/logger";
-const logger = createLogger("jiucaigongshe-hot");
+import { insertHot } from "@/mongodb/actions/jiucaigongshe";
+dayjs.extend(isBetween);
 
 export async function getActionPage() {
   const data = await axios.get(getActionUrl());
   console.log(data.data);
 }
 
-export const getMainPage = async () => {
-  // const data = await axios.get(mainUrl);
-  // console.log(data.data);
+export const getDailyAction = async (queryDay: string) => {
+  // 是否是最近30天
+  const inLast30 = dayjs(queryDay).isBetween(
+    dayjs().subtract(30, "day"),
+    dayjs()
+  );
+  if (!inLast30) {
+    return {
+      success: false,
+      message: "只能获取最近30天的数据",
+    };
+  }
   const browser = await puppeteer.launch({
     headless: true,
     devtools: false,
@@ -27,48 +34,48 @@ export const getMainPage = async () => {
     width: 1920,
     height: 1080,
   });
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    // console.log("--->>> ", request.resourceType(), request.url());
-    request.continue();
-  });
-  page.on("response", (response) => {
-    if (response.request().resourceType() === "xhr") {
-      console.log("+++>>> ", response.request().resourceType(), response.url());
-      response.json().then((res) => {
-        console.log("===>>> ", res);
-      });
-    }
-  });
-  const actionUrl = getActionUrl();
-  console.log("actionUrl: ", actionUrl);
+  const actionUrl = getActionUrl(queryDay);
   await page.goto(actionUrl, { waitUntil: "load" });
-  try {
-    await page.click(".yd-tabs_item", { delay: 10 });
-    // await page.click(".jc-bline", { delay: 300 });
-  } catch (error) {
-    console.error(error);
-    logger.error(JSON.stringify(error));
-  }
 
-  const resultsSelector = ".module .sort-box .fs18-bold";
-  // 浏览器的上下文中执行js代码
-  const result = await page.evaluate((resultsSelector) => {
-    const modules = Array.from(document.querySelectorAll(resultsSelector));
-    return {
-      modules,
-    };
-  }, resultsSelector);
+  await page.waitForSelector(".module-box.jc0").then(() => {
+    console.log("waitForSelector be call!!", actionUrl);
+  });
 
-  result.modules.forEach((element) => {
-    console.log(element.textContent);
+  const resultsSelector = "ul li.module";
+  // 通过选择器获取元素
+  const elements = await page.$$eval(resultsSelector, (links) => {
+    const categoryList = links.map((ele) => {
+      const category: Dictionary = {
+        category: ele
+          .querySelector(".sort-box .fs18-bold.lf")
+          ?.textContent?.trim(),
+        number: ele.querySelector(".sort-box .number.lf")?.textContent?.trim(),
+      };
+      category.stocks = Array.from(
+        ele.querySelectorAll("ul.td-box li.row")
+      ).map((stockEle) => {
+        return {
+          name: stockEle.querySelector(".fs15-bold")?.textContent?.trim(),
+          code: stockEle.querySelector(".fs12-bold-ash")?.textContent?.trim(),
+          price: stockEle.querySelector(".shrink.number")?.textContent?.trim(),
+          percent: stockEle.querySelector(".shrink.cred")?.textContent?.trim(),
+          time: stockEle.querySelector(".shrink.fs15")?.textContent?.trim(),
+          desc: stockEle.querySelector("pre.tl a")?.textContent?.trim(),
+          descLink: `${"https://www.jiucaigongshe.com"}${stockEle
+            .querySelector("pre.tl a")
+            ?.getAttribute("href")}`,
+        };
+      });
+      return category;
+    });
+    return categoryList.filter((item) => !!item.category);
   });
 
   // 浏览器截屏
-  await page.screenshot({
-    path: `screenshot-${Date.now()}.png`,
-    fullPage: true,
-  });
+  // await page.screenshot({
+  //   path: `screenshot-${Date.now()}.png`,
+  //   fullPage: true,
+  // });
 
   // 浏览器保存未pdf
   // await page.pdf({
@@ -78,30 +85,16 @@ export const getMainPage = async () => {
 
   await page.close();
   await browser.close();
+
+  const day = date.format(queryDay);
+  insertHot(elements, day);
+
+  return {
+    day: date.format(queryDay),
+    data: elements,
+  };
 };
 
-export async function getCurrentHots() {
-  const data = await axios.post(
-    countPcUrl,
-    { date: dayjs().format("YYYY-MM-DD") },
-    {
-      headers: {
-        "content-type": "application/json",
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
-        cookie:
-          "Hm_lvt_2d6d056d37910563cdaa290ee2981080=1655699263,1655719137; SESSION=MGNiOGQ2MzgtMTFhNi00YzllLTkxYjktMjFmZjc5OTA5ZWFj; Hm_lpvt_2d6d056d37910563cdaa290ee2981080=1656131287",
-        origin: "https://www.jiucaigongshe.com",
-        referer: "https://www.jiucaigongshe.com/",
-        "sec-ch-ua":
-          '" Not A;Brand";v="99", "Chromium";v="102", "Google Chrome";v="102"',
-      },
-    }
-  );
-}
+export async function getCurrentHots() {}
 
-export async function optionsPcCount() {
-  const data = await axios.options(countPcUrl);
-  getCurrentHots();
-  console.log(data);
-}
+export async function optionsPcCount() {}

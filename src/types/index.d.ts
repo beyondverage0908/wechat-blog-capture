@@ -5,8 +5,12 @@ export interface Dictionary {
 declare module "koa" {
   // DefaultContext 可以扩展 context
   interface DefaultContext {
-    success: (data?: Dictionary, code?: string, message?: string) => void;
-    error: (code?: string, message?: string) => void;
+    success: (
+      data?: Dictionary | string | number | null,
+      code?: string | number,
+      message?: string
+    ) => void;
+    error: (message?: string, code?: string | number, url?: string) => void;
   }
   // DefaultState 可以扩展 state
   interface DefaultState {}
