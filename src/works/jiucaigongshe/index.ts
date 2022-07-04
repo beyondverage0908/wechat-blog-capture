@@ -46,6 +46,6 @@ async function scheduleforEveryDayAction() {
 }
 
 export function initJiuCaiGongSheJob() {
-  getLast60DayActionData();
+  // getLast60DayActionData();
   scheduleforEveryDayAction();
 }

@@ -5,8 +5,11 @@
   "main": "main.ts",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --config nodemon.json",
+    "run": "cross-env NODE_ENV=production nodemon --config nodemon.json",
+    "build": "rimraf ./dist && tsc && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "pretty": "npx prettier --write .",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "deploy": "pm2 deploy production"
   },
   "keywords": [],
   "author": "",
@@ -39,8 +42,10 @@
     "nodemon": "^2.0.16",
     "only-allow": "^1.1.0",
     "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.8.1",
     "tsconfig-paths": "^4.0.0",
+    "tscpaths": "^0.0.9",
     "typescript": "^4.7.3"
   }
 }

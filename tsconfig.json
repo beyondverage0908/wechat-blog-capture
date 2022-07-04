@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "removeComments": true,
+    "outDir": "./dist",
+    "target": "ES2018",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["esnext", "esnext.asynciterable", "dom"],
     "esModuleInterop": true,
     "allowJs": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
@@ -18,5 +20,6 @@
     },
     "types": []
   },
+  "files": ["./src/main.ts"],
   "exclude": ["node_modules", "dist"]
 }

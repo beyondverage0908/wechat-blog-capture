@@ -6,17 +6,25 @@ const logger = createLogger("MongoDB-Log");
 
 export async function initMongoose() {
   try {
-    const username = 'linpingjun';
-    const pwd = 'abc@123';
+    type EnvType = "development" | "production";
+    const env = process.env.NODE_ENV as EnvType;
+    const config = DBConfig[env];
+    const mongoOption =
+      env === "development"
+        ? {
+            minPoolSize: 3,
+            maxPoolSize: 10,
+          }
+        : {
+            authSource: config.authSource,
+            user: config.name,
+            pass: config.pwd,
+            minPoolSize: 3,
+            maxPoolSize: 10,
+          };
     const mongo = await mongoose.connect(
-      `mongodb://127.0.0.1:27017/${DBConfig.name}`,
-      {
-        authSource: 'admin',
-        user: username,
-        pass: pwd,
-        minPoolSize: 3,
-        maxPoolSize: 10,
-      }
+      `mongodb://127.0.0.1:27017/${config.name}`,
+      mongoOption
     );
     const db = mongo.connection;
     db.on("connection", () => {
