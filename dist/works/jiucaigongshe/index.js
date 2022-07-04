@@ -31,19 +31,21 @@ async function getLast60DayActionData() {
 async function scheduleforEveryDayAction() {
     const rule = new node_schedule_1.default.RecurrenceRule();
     rule.second = 0;
-    rule.minute = 45;
+    rule.minute = 40;
     rule.hour = 15;
-    rule.dayOfWeek = [1, 2, 3, 4, 5, 6];
+    rule.dayOfWeek = [1, 2, 3, 4, 5];
     node_schedule_1.default.scheduleJob(rule, async () => {
         const date = (0, dayjs_1.default)().format("YYYY-MM-DD");
+        logger.info(`定时任务开始抓取${date}数据`);
         const CategoryModel = mongoose_1.default.model(model_1.t_jcgs_category, hot_2.CategorySchema);
         const count = await CategoryModel.find({ day: date }).count();
         if (count) {
+            logger.info(`定时任务抓取数据-数据库中已经存在${date}的数据`);
             return;
         }
         const data = await (0, hot_1.getDailyAction)(date);
         if (data.day) {
-            logger.info(`定时任务抓取了${date}的数据`);
+            logger.info(`定时任务抓取了${date}的数据-结束`);
             await (0, jiucaigongshe_1.insertHot)(data.categorys, data.day);
         }
     });

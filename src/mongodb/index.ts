@@ -7,7 +7,7 @@ const logger = createLogger("MongoDB-Log");
 export async function initMongoose() {
   try {
     type EnvType = "development" | "production";
-    const env = process.env.NODE_ENV as EnvType;
+    const env = (process.env.NODE_ENV as EnvType) || "development";
     const config = DBConfig[env];
     const mongoOption =
       env === "development"
@@ -17,7 +17,7 @@ export async function initMongoose() {
           }
         : {
             authSource: config.authSource,
-            user: config.name,
+            user: config.user,
             pass: config.pwd,
             minPoolSize: 3,
             maxPoolSize: 10,

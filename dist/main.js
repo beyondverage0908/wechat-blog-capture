@@ -11,6 +11,8 @@ const router_1 = require("./middleware/router");
 const ip_1 = require("./util/ip");
 const schedule_1 = require("./schedule");
 const mongodb_1 = require("./mongodb");
+const logger_1 = require("./middleware/logger");
+const logger = (0, logger_1.createLogger)();
 const app = new koa_1.default();
 app
     .use((0, error_catch_1.useGlobalCatch)())
@@ -20,7 +22,7 @@ app
     .use((0, router_1.useAllowedMethods)());
 app.listen(3000, async () => {
     const ip = (0, ip_1.getIp)();
-    console.log(`serve started in http://${ip}:3000`);
+    logger.info(`serve started in http://${ip}:3000`);
     await (0, mongodb_1.initMongoose)();
     (0, schedule_1.initScheduleJobs)();
 });

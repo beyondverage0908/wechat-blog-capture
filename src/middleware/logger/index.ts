@@ -1,14 +1,13 @@
 import log4js, { Level } from "log4js";
 import path from "path";
-import type Koa from "koa";
-
-type levelCategorys = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
 const dirName = "info.log";
 // 获取当前项目根目录下创建.logs目录
 const _path = path.resolve(process.cwd(), `./logs/${dirName}`);
 
 log4js.configure({
+  // 如果使用pm2的cluster模式部署，则需要在这里设置为真，否则logger无法创建
+  pm2: true,
   appenders: {
     cheese: {
       // 设置类型为 dateFile：输入到文件 stdout: 控制台输出

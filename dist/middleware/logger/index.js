@@ -9,6 +9,7 @@ const path_1 = __importDefault(require("path"));
 const dirName = "info.log";
 const _path = path_1.default.resolve(process.cwd(), `./logs/${dirName}`);
 log4js_1.default.configure({
+    pm2: true,
     appenders: {
         cheese: {
             type: "dateFile",

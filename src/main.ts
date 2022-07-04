@@ -6,6 +6,8 @@ import { useRoutes, useAllowedMethods } from "@/middleware/router";
 import { getIp } from "@/util/ip";
 import { initScheduleJobs } from "@/schedule";
 import { initMongoose } from "@/mongodb";
+import { createLogger } from "@/middleware/logger";
+const logger = createLogger();
 
 const app = new Koa();
 
@@ -18,7 +20,7 @@ app
 
 app.listen(3000, async () => {
   const ip = getIp();
-  console.log(`serve started in http://${ip}:3000`);
+  logger.info(`serve started in http://${ip}:3000`);
   await initMongoose();
   initScheduleJobs();
 });

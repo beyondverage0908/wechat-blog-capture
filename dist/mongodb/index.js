@@ -10,7 +10,7 @@ const config_1 = require("./config");
 const logger = (0, logger_1.createLogger)("MongoDB-Log");
 async function initMongoose() {
     try {
-        const env = process.env.NODE_ENV;
+        const env = process.env.NODE_ENV || "development";
         const config = config_1.DBConfig[env];
         const mongoOption = env === "development"
             ? {
@@ -19,7 +19,7 @@ async function initMongoose() {
             }
             : {
                 authSource: config.authSource,
-                user: config.name,
+                user: config.user,
                 pass: config.pwd,
                 minPoolSize: 3,
                 maxPoolSize: 10,

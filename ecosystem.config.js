@@ -3,11 +3,8 @@ module.exports = {
     {
       name: "pachou",
       script: "./dist/main.js",
-      env_production: {
+      env: {
         NODE_ENV: "production"
-      },
-      env_development: {
-        NODE_ENV: "development"
       },
       wait_ready: true,
       exec_mode: "cluster",
