@@ -5,11 +5,10 @@
   "main": "main.ts",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --config nodemon.json",
-    "run": "cross-env NODE_ENV=production nodemon --config nodemon.json",
     "build": "rimraf ./dist && tsc && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "pretty": "npx prettier --write .",
     "preinstall": "npx only-allow pnpm",
-    "deploy": "pm2 deploy production"
+    "deploy": "pm2 start ecosystem.config.js --env production"
   },
   "keywords": [],
   "author": "",
