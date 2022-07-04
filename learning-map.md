@@ -62,4 +62,12 @@
   > [Node.js 之定时任务](https://juejin.cn/post/6856586709837512718)
 - [ ] 探索任务队列的最佳实践
 - [ ] 探索断点调试程序，程序修改可以自启动
-- [ ] 探索基于 MongoDb 将数据落库
+- [x] 探索基于 MongoDb 将数据落库
+
+## 遇到的问题
+
+1. 部署在 CentOS 8 环境上，puppeteer 虽然会帮我们安装 `chromium`，但是 `chromium` 的启动不允许在 `root` 环境下需要添加`--no-sandbox`，否则无法启动。[issues-3698](https://github.com/puppeteer/puppeteer/issues/3698)
+2. pnpm 需要依赖 node14 以上的版本
+3. nvm 的更新极度依赖对 github 网络的通畅，通过 ip 检查工具（ip 监测网站）检查哪些 ip 可以访问 github，然后通过修改 host 的方式，可以比较快的升级 nvm
+4. CentOS 安装 MongoDB 参考官网[centos 安装 MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-red-hat/)
+5. 远程数据库工具连接 Mongo，需要先开放防火墙端口。[mongodb.conf](https://blog.csdn.net/qq_39722119/article/details/84347222)

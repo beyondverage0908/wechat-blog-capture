@@ -16,10 +16,9 @@ app
   .use(useRoutes())
   .use(useAllowedMethods());
 
-initScheduleJobs();
-
-app.listen(3000, () => {
+app.listen(3000, async () => {
   const ip = getIp();
   console.log(`serve started in http://${ip}:3000`);
-  initMongoose();
+  await initMongoose();
+  initScheduleJobs();
 });

@@ -47,7 +47,7 @@ const insertCategory = async (category: Category, day: string) => {
  * @param day
  * @returns
  */
-export const insertHot = async (categorys: Category[], day: string) => {
+export const insertHot = async (categorys: Category[] = [], day: string) => {
   const CategoryModel = mongoose.model(t_jcgs_category, CategorySchema);
   const count = await CategoryModel.find({ day: day }).count();
   if (count) {
