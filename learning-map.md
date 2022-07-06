@@ -71,3 +71,4 @@
 3. nvm 的更新极度依赖对 github 网络的通畅，通过 ip 检查工具（ip 监测网站）检查哪些 ip 可以访问 github，然后通过修改 host 的方式，可以比较快的升级 nvm
 4. CentOS 安装 MongoDB 参考官网[centos 安装 MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-red-hat/)
 5. 远程数据库工具连接 Mongo，需要先开放防火墙端口。[mongodb.conf](https://blog.csdn.net/qq_39722119/article/details/84347222)
+6. 偶遇一次开发过程中文件中文件输入"@/xx"无法进行代码模块提示。这种情况很可能是 typescript 服务已经挂了`Ctrl+Shift+P > Typescript: Restart TS Server`进行解决[In VS Code: [ts] Cannot find module '@src/xxx'](https://stackoverflow.com/questions/51319613/in-vs-code-ts-cannot-find-module-src-xxx)

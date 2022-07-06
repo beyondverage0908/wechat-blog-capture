@@ -16,10 +16,11 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
     "types": []
   },
+  "include": ["./**/*.ts", "./**/*.js"],
   "files": ["./src/main.ts"],
   "exclude": ["node_modules", "dist"]
 }
