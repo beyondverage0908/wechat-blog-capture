@@ -9,7 +9,7 @@
       "type": "node",
       "request": "launch",
       "args": [
-        "${workspaceFolder}/main.ts"
+        "${workspaceFolder}/src/main.ts"
       ],
       "runtimeExecutable": "node",
       "runtimeArgs": [

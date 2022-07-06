@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { isValidObjectId, ObjectId, Schema } from "mongoose";
 import {
   CategorySchema,
   StockSchema,
@@ -26,7 +26,6 @@ const insertStocks = async (stocks?: Stock[], categoryId?: any) => {
     }))
   );
 };
-
 /**
  * 插入某日的的数据落库
  * @param category
@@ -52,10 +51,40 @@ export const insertHot = async (categorys: Category[] = [], day: string) => {
   const count = await CategoryModel.find({ day: day }).count();
   if (count) {
     logger.info(`数据库已经存在${day}的数据了，无需再插入数据`);
-    return;
+    return false;
   }
   categorys.forEach(async (cate) => {
     const result = await insertCategory(cate, day);
     insertStocks(cate.stocks, result?._id);
   });
+  return true;
+};
+/**
+ * 更新每日数据
+ * @param category
+ * @param day
+ */
+export const updateHot = async (categorys: Category[] = [], day: string) => {
+  const CategoryModel = mongoose.model(t_jcgs_category, CategorySchema);
+  const count = await CategoryModel.find({ day: day }).count();
+  if (!count) {
+    return false;
+  }
+  logger.info("更新数据过程中先删除Category数据");
+  // 使用先删除，在插入的方式进行更新
+  const categoryResultList = await CategoryModel.find({ day });
+  const categoryIds = categoryResultList.map((item) => item._id);
+  // 删除stocks中指定通过category_id
+  const StockMode = mongoose.model(t_jcgs_stock, StockSchema);
+  for await (const id of categoryIds) {
+    await StockMode.deleteMany({ category_id: id });
+  }
+  // 删除category中的数据
+  const deleteCategory = await CategoryModel.deleteMany({ day: day });
+  if (deleteCategory.acknowledged) {
+    logger.info("更新数据过程中已经删除Category数据");
+    const result = await insertHot(categorys, day);
+    return result;
+  }
+  return false;
 };

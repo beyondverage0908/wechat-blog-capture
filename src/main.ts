@@ -21,6 +21,7 @@ app
 app.listen(3000, async () => {
   const ip = getIp();
   logger.info(`serve started in http://${ip}:3000`);
+  console.log(`serve started in http://${ip}:3000`);
   await initMongoose();
   initScheduleJobs();
 });
