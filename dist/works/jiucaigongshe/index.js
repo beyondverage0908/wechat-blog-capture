@@ -8,10 +8,10 @@ const dayjs_1 = __importDefault(require("dayjs"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const hot_1 = require("./hot");
-const jiucaigongshe_1 = require("../../../mongodb/actions/jiucaigongshe");
-const model_1 = require("../../../mongodb/model");
-const hot_2 = require("../../../mongodb/schema/jiucaigongshe/hot");
-const logger_1 = require("../../../middleware/logger");
+const jiucaigongshe_1 = require("../../mongodb/actions/jiucaigongshe");
+const model_1 = require("../../mongodb/model");
+const hot_2 = require("../../mongodb/schema/jiucaigongshe/hot");
+const logger_1 = require("../../middleware/logger");
 const logger = (0, logger_1.createLogger)("JiuCaiGongSheLog-Auto");
 async function getLast60DayActionData() {
     for await (const v of Array.from({ length: 60 }, (_, index) => index)) {

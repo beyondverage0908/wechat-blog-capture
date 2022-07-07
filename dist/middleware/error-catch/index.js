@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useGlobalCatch = void 0;
-const logger_1 = require("../../../middleware/logger");
+const logger_1 = require("../logger");
 const logger = (0, logger_1.createLogger)("ErrorCatch");
 async function globalCatch(ctx, next) {
     try {

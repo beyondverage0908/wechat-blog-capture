@@ -8,8 +8,9 @@ const router = new Router<DefaultState, Context>();
 router.get("/hq", async (ctx) => {
   const hqList = await getHq();
   const today = DateTool.format();
+  console.log(today);
   // 触发写库操作
-  saveHqData(hqList, today);
+  await saveHqData(hqList, today);
   ctx.success(hqList);
 });
 

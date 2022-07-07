@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initEastmoneyJob = void 0;
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const hq_1 = require("./hq");
-const hangqing_1 = require("../../../mongodb/eastmoney/hangqing");
-const date_1 = __importDefault(require("../../../lib/date"));
+const hangqing_1 = require("../../mongodb/eastmoney/hangqing");
+const date_1 = __importDefault(require("../../lib/date"));
 const hqEstmoneyJob = () => {
     const rule = new node_schedule_1.default.RecurrenceRule();
     rule.dayOfWeek = [1, 2, 3, 4, 5];

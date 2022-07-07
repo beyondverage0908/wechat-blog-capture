@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFormatResponse = void 0;
-const status_1 = require("../../../constant/status");
+const status_1 = require("../../constant/status");
 function useFormatResponse() {
     return async (ctx, next) => {
         ctx.success = (data, code, message) => {

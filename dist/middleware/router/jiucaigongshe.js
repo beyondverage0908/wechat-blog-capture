@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_router_1 = __importDefault(require("koa-router"));
-const hot_1 = require("../../../works/jiucaigongshe/hot");
-const jiucaigongshe_1 = require("../../../works/jiucaigongshe");
-const date_1 = __importDefault(require("../../../lib/date"));
+const hot_1 = require("../../works/jiucaigongshe/hot");
+const jiucaigongshe_1 = require("../../works/jiucaigongshe");
+const date_1 = __importDefault(require("../../lib/date"));
 const router = new koa_router_1.default();
 router.get("/hot/:day", async (ctx) => {
     const { day } = ctx.params;

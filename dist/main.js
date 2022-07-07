@@ -4,14 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_1 = __importDefault(require("koa"));
-const time_log_1 = require("../middleware/time-log");
-const error_catch_1 = require("../middleware/error-catch");
-const response_1 = require("../middleware/response");
-const router_1 = require("../middleware/router");
-const ip_1 = require("../util/ip");
-const schedule_1 = require("../schedule");
-const mongodb_1 = require("../mongodb");
-const logger_1 = require("../middleware/logger");
+const time_log_1 = require("./middleware/time-log");
+const error_catch_1 = require("./middleware/error-catch");
+const response_1 = require("./middleware/response");
+const router_1 = require("./middleware/router");
+const ip_1 = require("./util/ip");
+const schedule_1 = require("./schedule");
+const mongodb_1 = require("./mongodb");
+const logger_1 = require("./middleware/logger");
 const logger = (0, logger_1.createLogger)();
 const app = new koa_1.default();
 app

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDailyAction = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const jiucaigongshe_1 = require("../../../constant/urls/jiucaigongshe");
+const jiucaigongshe_1 = require("../../constant/urls/jiucaigongshe");
 const dayjs_1 = __importDefault(require("dayjs"));
 const isBetween_1 = __importDefault(require("dayjs/plugin/isBetween"));
 const customParseFormat_1 = __importDefault(require("dayjs/plugin/customParseFormat"));

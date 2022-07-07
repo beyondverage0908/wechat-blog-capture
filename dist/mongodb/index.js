@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const logger_1 = require("../../middleware/logger");
+const logger_1 = require("../middleware/logger");
 const config_1 = require("./config");
 const logger = (0, logger_1.createLogger)("MongoDB-Log");
 async function initMongoose() {

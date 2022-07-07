@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHq = void 0;
 const axios_1 = __importDefault(require("axios"));
 const cheerio = __importStar(require("cheerio"));
-const eastmoney_1 = require("../../../constant/urls/eastmoney");
+const eastmoney_1 = require("../../constant/urls/eastmoney");
 const getHq = async () => {
     const data = await axios_1.default.get(eastmoney_1.mainUrl);
     const html = data.data;

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_router_1 = __importDefault(require("koa-router"));
 const axios_1 = __importDefault(require("axios"));
-const cheerio_1 = __importDefault(require("../../../util/cheerio"));
+const cheerio_1 = __importDefault(require("../../util/cheerio"));
 const router = new koa_router_1.default();
 router.get("/capture", async (ctx) => {
     const { url } = ctx.query;

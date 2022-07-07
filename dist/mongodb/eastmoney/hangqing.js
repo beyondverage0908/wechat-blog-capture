@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveHqData = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const eastmoney_1 = require("../../../mongodb/schema/eastmoney");
-const model_1 = require("../../../mongodb/model");
-const logger_1 = require("../../../middleware/logger");
+const eastmoney_1 = require("../schema/eastmoney");
+const model_1 = require("../model");
+const logger_1 = require("../../middleware/logger");
 const dayjs_1 = __importDefault(require("dayjs"));
 const logger = (0, logger_1.createLogger)("Eastmoney-Action");
 const insertHqData = async (hqList, day) => {

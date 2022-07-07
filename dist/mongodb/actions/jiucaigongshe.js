@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateHot = exports.insertHot = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const hot_1 = require("../../../mongodb/schema/jiucaigongshe/hot");
+const hot_1 = require("../schema/jiucaigongshe/hot");
 const model_1 = require("../model");
-const logger_1 = require("../../../middleware/logger");
+const logger_1 = require("../../middleware/logger");
 const logger = (0, logger_1.createLogger)("JiuCaiGongShe-Actions");
 const insertStocks = async (stocks, categoryId) => {
     if (!stocks)
