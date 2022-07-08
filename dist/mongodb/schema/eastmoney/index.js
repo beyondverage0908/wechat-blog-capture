@@ -28,6 +28,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 exports.HqSchema = new mongoose_1.default.Schema({
     day: mongoose_1.Schema.Types.String,
     name: mongoose_1.Schema.Types.String,
+    price: mongoose_1.Schema.Types.Number,
     change: mongoose_1.Schema.Types.Number,
     percent: mongoose_1.Schema.Types.Number,
     time: mongoose_1.Schema.Types.String,

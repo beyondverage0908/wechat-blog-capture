@@ -11,8 +11,8 @@ const date_1 = __importDefault(require("../../lib/date"));
 const hqEstmoneyJob = () => {
     const rule = new node_schedule_1.default.RecurrenceRule();
     rule.dayOfWeek = [1, 2, 3, 4, 5];
-    rule.second = 30;
     rule.hour = [9, 10, 11, 13, 14];
+    rule.second = 30;
     const today = date_1.default.format();
     node_schedule_1.default.scheduleJob(rule, async () => {
         const hqList = await (0, hq_1.getHq)();

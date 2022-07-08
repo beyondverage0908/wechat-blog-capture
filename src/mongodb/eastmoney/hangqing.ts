@@ -13,7 +13,8 @@ const insertHqData = async (hqList: HqStock[], day: string) => {
     hqList.map((item) => ({
       day: day,
       name: item.name,
-      change: item.change ? Number(item.change) : null,
+      price: item.price !== "-" ? Number(item.price) : null,
+      change: item.change !== "-" ? Number(item.change) : null,
       percent:
         item.percent && item.percent.includes("%")
           ? Number(item.percent.replace("%", ""))
@@ -34,17 +35,18 @@ export const saveHqData = async (hqList: HqStock[], day: string) => {
   logger.info("准备存储数据");
   const HqStockModel = mongoose.model(t_em_hq, HqSchema);
   const count = await HqStockModel.find({ day: day }).count();
+
   if (!count) {
     // 新增
     await insertHqData(hqList, day);
-    logger.info("准备存储数据（新增）-完成");
+    logger.info(`准备存储数据（新增）- 完成 - ${day}`);
     return true;
   } else {
     // 更新
     const result = await HqStockModel.deleteMany({ day });
     if (result.acknowledged) {
       await insertHqData(hqList, day);
-      logger.info("准备存储数据（更新）-完成");
+      logger.info(`准备存储数据（更新）- 完成 - ${day}`);
       return true;
     }
   }

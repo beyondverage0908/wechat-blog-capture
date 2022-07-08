@@ -15,7 +15,8 @@ const insertHqData = async (hqList, day) => {
     const result = await HqStockModel.insertMany(hqList.map((item) => ({
         day: day,
         name: item.name,
-        change: item.change ? Number(item.change) : null,
+        price: item.price !== "-" ? Number(item.price) : null,
+        change: item.change !== "-" ? Number(item.change) : null,
         percent: item.percent && item.percent.includes("%")
             ? Number(item.percent.replace("%", ""))
             : null,
@@ -29,14 +30,14 @@ const saveHqData = async (hqList, day) => {
     const count = await HqStockModel.find({ day: day }).count();
     if (!count) {
         await insertHqData(hqList, day);
-        logger.info("准备存储数据（新增）-完成");
+        logger.info(`准备存储数据（新增）- 完成 - ${day}`);
         return true;
     }
     else {
         const result = await HqStockModel.deleteMany({ day });
         if (result.acknowledged) {
             await insertHqData(hqList, day);
-            logger.info("准备存储数据（更新）-完成");
+            logger.info(`准备存储数据（更新）- 完成 - ${day}`);
             return true;
         }
     }
