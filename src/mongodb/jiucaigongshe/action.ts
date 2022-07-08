@@ -1,4 +1,4 @@
-import mongoose, { isValidObjectId, ObjectId, Schema } from "mongoose";
+import mongoose from "mongoose";
 import {
   CategorySchema,
   StockSchema,
@@ -68,6 +68,7 @@ export const updateHot = async (categorys: Category[] = [], day: string) => {
   const CategoryModel = mongoose.model(t_jcgs_category, CategorySchema);
   const count = await CategoryModel.find({ day: day }).count();
   if (!count) {
+    await insertHot(categorys, day);
     return false;
   }
   logger.info("更新数据过程中先删除Category数据");
@@ -87,4 +88,20 @@ export const updateHot = async (categorys: Category[] = [], day: string) => {
     return result;
   }
   return false;
+};
+
+export const queryActionOfRange = async (dateRange: string[]) => {
+  console.log(dateRange);
+  const CategoryModel = mongoose.model(t_jcgs_category, CategorySchema);
+  const rows = await CategoryModel.find({ day: { $in: dateRange } });
+  const StockModel = mongoose.model(t_jcgs_stock, StockSchema);
+  const results: any[] = [];
+  for await (const item of rows) {
+    const m = { ...item, stocks: [] as any[] } as any;
+    const stocks = await StockModel.find({ category_id: item._id });
+    console.log(stocks);
+    m.stocks = stocks;
+    results.push(m);
+  }
+  return results;
 };

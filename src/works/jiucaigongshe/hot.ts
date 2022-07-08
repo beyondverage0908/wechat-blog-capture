@@ -4,7 +4,7 @@ import { Dictionary } from "@/types";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { insertHot } from "@/mongodb/actions/jiucaigongshe";
+import { insertHot } from "@/mongodb/jiucaigongshe/action";
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 

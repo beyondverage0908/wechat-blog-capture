@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import mongoose from "mongoose";
 import schedule from "node-schedule";
 import { getDailyAction } from "./hot";
-import { insertHot, updateHot } from "@/mongodb/actions/jiucaigongshe";
+import { insertHot, updateHot } from "@/mongodb/jiucaigongshe/action";
 import { t_jcgs_category } from "@/mongodb/model";
 import { CategorySchema } from "@/mongodb/schema/jiucaigongshe/hot";
 import { createLogger } from "@/middleware/logger";
