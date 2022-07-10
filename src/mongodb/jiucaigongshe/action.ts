@@ -9,6 +9,8 @@ import { createLogger } from "@/middleware/logger";
 
 const logger = createLogger("JiuCaiGongShe-Actions");
 
+type RangeAction = { day?: string } & Category;
+
 /**
  * 批量插入股票信息
  * @param stocks
@@ -89,18 +91,33 @@ export const updateHot = async (categorys: Category[] = [], day: string) => {
   }
   return false;
 };
-
+/**
+ * 查询指定时间范围的异动数据
+ * @param dateRange
+ * @returns
+ */
 export const queryActionOfRange = async (dateRange: string[]) => {
-  console.log(dateRange);
   const CategoryModel = mongoose.model(t_jcgs_category, CategorySchema);
   const rows = await CategoryModel.find({ day: { $in: dateRange } });
   const StockModel = mongoose.model(t_jcgs_stock, StockSchema);
-  const results: any[] = [];
+  const results: RangeAction[] = [];
   for await (const item of rows) {
-    const m = { ...item, stocks: [] as any[] } as any;
+    const m: RangeAction = {
+      category: item.category,
+      number: item.number,
+      day: item.day,
+      stocks: [],
+    };
     const stocks = await StockModel.find({ category_id: item._id });
-    console.log(stocks);
-    m.stocks = stocks;
+    m.stocks = stocks.map((s) => ({
+      name: s.name,
+      code: s.code,
+      price: s.price,
+      percent: s.percent,
+      time: s.time,
+      desc: s.desc,
+      descLink: s.desc_link,
+    }));
     results.push(m);
   }
   return results;

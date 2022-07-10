@@ -8,7 +8,7 @@ const dayjs_1 = __importDefault(require("dayjs"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const hot_1 = require("./hot");
-const jiucaigongshe_1 = require("../../mongodb/actions/jiucaigongshe");
+const action_1 = require("../../mongodb/jiucaigongshe/action");
 const model_1 = require("../../mongodb/model");
 const hot_2 = require("../../mongodb/schema/jiucaigongshe/hot");
 const logger_1 = require("../../middleware/logger");
@@ -24,7 +24,7 @@ async function getLast60DayActionData() {
         }
         const data = await (0, hot_1.getDailyAction)(date);
         if (data.day) {
-            await (0, jiucaigongshe_1.insertHot)(data.categorys, data.day);
+            await (0, action_1.insertHot)(data.categorys, data.day);
         }
     }
 }
@@ -50,12 +50,12 @@ async function updateTargetDayAction(day) {
     const CategoryModel = mongoose_1.default.model(model_1.t_jcgs_category, hot_2.CategorySchema);
     const count = await CategoryModel.find({ day: day }).count();
     if (count) {
-        const result = await (0, jiucaigongshe_1.updateHot)(data.categorys, data.day);
+        const result = await (0, action_1.updateHot)(data.categorys, data.day);
         logger.info(`触发任务抓取了${data.day}的数据-更新-结束`);
         return result;
     }
     else {
-        const result = await (0, jiucaigongshe_1.insertHot)(data.categorys, data.day);
+        const result = await (0, action_1.insertHot)(data.categorys, data.day);
         logger.info(`触发任务抓取了${data.day}的数据-新增-结束`);
         return result;
     }

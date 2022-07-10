@@ -11,4 +11,13 @@ exports.default = {
     fullFormat(date) {
         return (0, dayjs_1.default)(date).format("YYYY-MM-DD HH:mm:ss");
     },
+    range(startDate, endDate) {
+        if (!startDate || !endDate)
+            return [];
+        const diff = (0, dayjs_1.default)(endDate).diff(startDate, "day");
+        const range = Array.from({ length: diff }, (_, i) => {
+            return (0, dayjs_1.default)(startDate).add(i, "day").format("YYYY-MM-DD");
+        });
+        return [...range, endDate];
+    },
 };

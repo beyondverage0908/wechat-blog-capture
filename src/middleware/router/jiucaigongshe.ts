@@ -33,9 +33,26 @@ router.get("/action", async (ctx) => {
     ctx.error("时间范围必填");
     return;
   }
+  // 查询数据库中的数据
   const dateRange = date.range(startDate as string, endDate as string);
   const result = await queryActionOfRange(dateRange);
-  ctx.success(result);
+  // 对原始数据进行范围内的求和处理
+  const map = new Map();
+  result.forEach((item) => {
+    const hasCategory = map.has(item.category);
+    if (!hasCategory) {
+      map.set(item.category, item);
+    } else {
+      const preItem = map.get(item.category);
+      preItem.number += item.number;
+      preItem.stocks = preItem.stocks.concat(item.stocks);
+    }
+  });
+  // 倒序排列指定时间范围内的数据
+  const sortArray = Array.from(map.values()).sort(
+    (a, b) => b.number - a.number
+  );
+  ctx.success(sortArray);
 });
 
 export default router;
