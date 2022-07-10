@@ -6,7 +6,7 @@ import wechat from "./wechat";
 import eastmoney from "./eastmoney";
 import jiucaigongshe from "./jiucaigongshe";
 
-const router = new Router<DefaultState, Context>();
+const router = new Router<DefaultState, Context>({ prefix: "/pac/api" });
 
 // 添加模块的路由
 router.use("/home", home.routes(), home.allowedMethods());

@@ -18,6 +18,7 @@ router.get("/hot/:day", async (ctx) => {
     ctx.success(data);
   }
 });
+// 获取当日数据
 router.get("/today", async (ctx) => {
   const today = date.format();
   const isSuccess = await updateTargetDayAction(today);
