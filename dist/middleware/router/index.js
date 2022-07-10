@@ -10,7 +10,7 @@ const page_1 = __importDefault(require("./page"));
 const wechat_1 = __importDefault(require("./wechat"));
 const eastmoney_1 = __importDefault(require("./eastmoney"));
 const jiucaigongshe_1 = __importDefault(require("./jiucaigongshe"));
-const router = new koa_router_1.default();
+const router = new koa_router_1.default({ prefix: "/pac/api" });
 router.use("/home", home_1.default.routes(), home_1.default.allowedMethods());
 router.use("/page", page_1.default.routes(), page_1.default.allowedMethods());
 router.use("/wechat", wechat_1.default.routes(), wechat_1.default.allowedMethods());
