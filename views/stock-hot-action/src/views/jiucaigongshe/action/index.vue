@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import * as echarts from "echarts";
-import { getActionRange } from "../../../apis/jiucaigongshe";
+import { getActionRange } from "/@/apis/jiucaigongshe";
 
 var ROOT_PATH = "https://echarts.apache.org/examples";
 type EChartsOption = echarts.EChartsOption;
