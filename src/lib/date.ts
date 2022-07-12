@@ -9,7 +9,9 @@ export default {
    * @returns
    */
   format(date?: DateType) {
-    return dayjs(date).format("YYYY-MM-DD");
+    // 需要构建一个新的日期对象，在centeos系统中，如果在定时任务中仅仅调用dayjs()，他的日期对象是会被复用的，导致长期都是一个历史日期，只要在reload程序后才会读取到最新的日期
+    const fdate = new Date() || date;
+    return dayjs(fdate).format("YYYY-MM-DD");
   },
   /**
    * 格式化 YYYY-MM-DD HH:mm:ss
@@ -17,13 +19,14 @@ export default {
    * @returns
    */
   fullFormat(date?: DateType) {
-    return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+    const fdate = new Date() || date;
+    return dayjs(fdate).format("YYYY-MM-DD HH:mm:ss");
   },
   /**
-   * 根据其实时间和结束时间获取时间范围输入
+   * 根据其实时间和结束时间获取时间范围输入，生成[YYYY-MM-DD, YYYY-MM-DD, YYYY-MM-DD]
    * @param startDate
    * @param endDate
-   * @returns
+   * @returns [YYYY-MM-DD, YYYY-MM-DD, YYYY-MM-DD]
    */
   range(startDate: string, endDate: string) {
     if (!startDate || !endDate) return [];
