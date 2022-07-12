@@ -1,6 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-interface HttpResponse {}
+interface HttpResponse {
+  data?: Record<string, any>;
+  code: string;
+  message: string;
+  success: boolean;
+}
 
 const HttpSuccessCode = "200";
 const baseUrl = "/pac/api";
@@ -8,7 +13,7 @@ const baseUrl = "/pac/api";
 class Http {
   constructor() {}
   get(url: string, config: AxiosRequestConfig<any> | undefined) {
-    return new Promise((resolve, reject) => {
+    return new Promise<HttpResponse>((resolve, reject) => {
       axios.get(url, { ...config, baseURL: baseUrl }).then((result) => {
         resolve(result.data);
         if (
@@ -21,7 +26,7 @@ class Http {
     });
   }
   post(url: string, config: AxiosRequestConfig<any> | undefined) {
-    return new Promise((resolve, reject) => {
+    return new Promise<HttpResponse>((resolve, reject) => {
       axios.post(url, { ...config, baseURL: baseUrl }).then((result) => {
         resolve(result.data);
         if (

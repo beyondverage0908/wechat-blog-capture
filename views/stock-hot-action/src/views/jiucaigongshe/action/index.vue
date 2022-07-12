@@ -1,130 +1,133 @@
 <script setup lang="ts">
+import dayjs from "dayjs";
 import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
 import { getActionRange } from "/@/apis/jiucaigongshe";
+import storage from "/@/libs/storage";
+import { LocalCategoryRange } from "/@/constant";
+import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
 
-var ROOT_PATH = "https://echarts.apache.org/examples";
 type EChartsOption = echarts.EChartsOption;
-
+interface TreeNode {
+	name: string;
+	value: number;
+	link: string;
+	data?: Stock[];
+	children?: TreeNode[];
+}
 const chartDom = ref<HTMLElement>();
 onMounted(() => {
-	console.log(chartDom.value);
 	renderChart();
 });
 
-function renderChart() {
-	var myChart = echarts.init(chartDom.value!);
-	var option: EChartsOption;
+async function renderChart() {
+	let option: EChartsOption;
+	let myChart = echarts.init(chartDom.value!);
+	const startDate = dayjs().subtract(7, "day").format("YYYY-MM-DD");
+	const endDate = dayjs().format("YYYY-MM-DD");
 
-	type RawNode = {
-		[key: string]: RawNode;
-	} & {
-		$count: number;
-	};
+	myChart.showLoading();
+	const data = await getActionRange(startDate, endDate);
+	myChart.hideLoading();
+	if (data.code !== "200") {
+		return;
+	}
+	const categoryList = data.data as Category[];
+	storage.saveStorage(LocalCategoryRange, JSON.stringify(categoryList));
+	const treeNodeList: TreeNode[] = categoryList.map((item) => ({
+		name: item.category,
+		value: item.number,
+		data: item.stocks,
+		link: `${window.location.origin}/action-detail?name=${item.category}`,
+	}));
 
-	interface TreeNode {
-		name: string;
-		value: number;
-		children?: TreeNode[];
+	const formatUtil = echarts.format;
+	function getLevelOption() {
+		return [
+			{
+				itemStyle: {
+					borderWidth: 0,
+					gapWidth: 5,
+				},
+			},
+			{
+				itemStyle: {
+					gapWidth: 1,
+				},
+			},
+			{
+				colorSaturation: [0.35, 0.5],
+				itemStyle: {
+					gapWidth: 1,
+					borderColorSaturation: 0.6,
+				},
+			},
+		];
 	}
 
-	// const uploadedDataURL =
-	//   ROOT_PATH + "/data/asset/data/ec-option-doc-statistics-201604.json";
-
-	// myChart.showLoading();
-
-	// axios.get("").then((rawData) => {
-	//   console.log(rawData);
-	// });
-	// console.log(uploadedDataURL);
-
-	getActionRange("2022-07-06", "2022-07-08").then((res) => {
-		console.log(res);
-	});
-
-	// $.getJSON(uploadedDataURL, function (rawData) {
-	//   myChart.hideLoading();
-
-	//   function convert(source: RawNode, target: TreeNode, basePath: string) {
-	//     for (let key in source) {
-	//       let path = basePath ? basePath + "." + key : key;
-	//       if (!key.match(/^\$/)) {
-	//         target.children = target.children || [];
-	//         const child = {
-	//           name: path,
-	//         } as TreeNode;
-	//         target.children.push(child);
-	//         convert(source[key], child, path);
-	//       }
-	//     }
-
-	//     if (!target.children) {
-	//       target.value = source.$count || 1;
-	//     } else {
-	//       target.children.push({
-	//         name: basePath,
-	//         value: source.$count,
-	//       });
-	//     }
-	//   }
-
-	//   const data = {
-	//     children: [] as TreeNode[],
-	//   } as TreeNode;
-
-	//   convert(rawData, data, "");
-
-	//   myChart.setOption(
-	//     (option = {
-	//       title: {
-	//         text: "ECharts Options",
-	//         subtext: "2016/04",
-	//         left: "leafDepth",
-	//       },
-	//       tooltip: {},
-	//       series: [
-	//         {
-	//           name: "option",
-	//           type: "treemap",
-	//           visibleMin: 300,
-	//           data: data.children,
-	//           leafDepth: 2,
-	//           levels: [
-	//             {
-	//               itemStyle: {
-	//                 borderColor: "#555",
-	//                 borderWidth: 4,
-	//                 gapWidth: 4,
-	//               },
-	//             },
-	//             {
-	//               colorSaturation: [0.3, 0.6],
-	//               itemStyle: {
-	//                 borderColorSaturation: 0.7,
-	//                 gapWidth: 2,
-	//                 borderWidth: 2,
-	//               },
-	//             },
-	//             {
-	//               colorSaturation: [0.3, 0.5],
-	//               itemStyle: {
-	//                 borderColorSaturation: 0.6,
-	//                 gapWidth: 1,
-	//               },
-	//             },
-	//             {
-	//               colorSaturation: [0.3, 0.5],
-	//             },
-	//           ],
-	//         },
-	//       ],
-	//     })
-	//   );
-	// });
-
-	// option && myChart.setOption(option);
+	myChart.setOption(
+		(option = {
+			tooltip: {
+				formatter: function (info: any) {
+					let value = info.value;
+					let treePathInfo = info.treePathInfo;
+					let data = info.data;
+					let treePath = [];
+					for (let i = 1; i < treePathInfo.length; i++) {
+						treePath.push(treePathInfo[i].name);
+					}
+					const stockInfos: string[] = [];
+					let stockInfo = "";
+					if (!data.data) {
+						return "";
+					}
+					data.data.forEach((item: any, index: number) => {
+						if (index % 3 === 0) {
+							stockInfo += `<span>${item.name}(${item.code})</span>`;
+							stockInfos.push(`<div>${stockInfo}</div>`);
+							stockInfo = "";
+						} else {
+							stockInfo += `<span>${item.name}(${item.code})</span>`;
+						}
+						if (index === data.data.length - 1) {
+							stockInfos.push(`<div>${stockInfo}</div>`);
+						}
+					});
+					return [
+						'<div class="tooltip-title">' +
+							formatUtil.encodeHTML(treePath.join("/")) +
+							"</div>",
+						"数量: " + formatUtil.addCommas(value),
+					]
+						.concat(stockInfos)
+						.join("");
+				},
+			},
+			series: [
+				{
+					name: "异动数据",
+					type: "treemap",
+					visibleMin: 0,
+					width: "98%",
+					height: "95%",
+					nodeClick: "link",
+					roam: false,
+					label: {
+						show: true,
+						formatter: "{b}{c}",
+						fontSize: 16,
+					},
+					itemStyle: {
+						borderColor: "#fff",
+					},
+					levels: getLevelOption(),
+					data: treeNodeList,
+				},
+			],
+		})
+	);
 }
 </script>
 <template>
-	<div ref="chartDom">1111113333</div>
+	<div style="width: 100%; height: 100vh" ref="chartDom"></div>
 </template>
