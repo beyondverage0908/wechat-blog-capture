@@ -20,7 +20,6 @@ class Http {
           result.data.code !== HttpSuccessCode ||
           result.data.success !== true
         ) {
-          console.log("xxx");
         }
       });
     });

@@ -1,5 +1,5 @@
 <template>
-	<n-data-table striped :data="tableData" :columns="columns" />
+	<n-data-table striped :data="tableData" :columns="columns"/>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref, h } from "vue";
@@ -10,6 +10,14 @@ import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
 import { DataTableColumn } from "naive-ui";
 
 const columns = computed((): DataTableColumn[] => [
+  {
+    title: '#',
+    key: 'index',
+    width: 60,
+    render: (_, index) => {
+      return `${index + 1}`
+    }
+  },
 	{
 		title: "证券名称",
 		key: "name",

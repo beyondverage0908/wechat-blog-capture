@@ -6,6 +6,7 @@ import { getActionRange } from "/@/apis/jiucaigongshe";
 import storage from "/@/libs/storage";
 import { LocalCategoryRange } from "/@/constant";
 import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
+import Header from "/@/views/jiucaigongshe/action/components/header.vue";
 
 type EChartsOption = echarts.EChartsOption;
 interface TreeNode {
@@ -16,15 +17,11 @@ interface TreeNode {
 	children?: TreeNode[];
 }
 const chartDom = ref<HTMLElement>();
-onMounted(() => {
-	renderChart();
-});
-
-async function renderChart() {
+async function renderChart(startDay: string, endDay: string) {
 	let option: EChartsOption;
 	let myChart = echarts.init(chartDom.value!);
-	const startDate = dayjs().subtract(7, "day").format("YYYY-MM-DD");
-	const endDate = dayjs().format("YYYY-MM-DD");
+	const startDate = startDay;
+	const endDate = endDay;
 
 	myChart.showLoading();
 	const data = await getActionRange(startDate, endDate);
@@ -78,7 +75,7 @@ async function renderChart() {
 					}
 					const stockInfos: string[] = [];
 					let stockInfo = "";
-					if (!data.data) {
+					if (!data || !data.data) {
 						return "";
 					}
 					data.data.forEach((item: any, index: number) => {
@@ -108,8 +105,8 @@ async function renderChart() {
 					name: "异动数据",
 					type: "treemap",
 					visibleMin: 0,
-					width: "98%",
-					height: "95%",
+					width: "99%",
+					height: "99%",
 					nodeClick: "link",
 					roam: false,
 					label: {
@@ -127,7 +124,20 @@ async function renderChart() {
 		})
 	);
 }
+// 获取时间变更
+const handleUpdateDate = (range: {startDay: string, endDay: string}) => {
+  renderChart(range.startDay, range.endDay)
+}
 </script>
 <template>
-	<div style="width: 100%; height: 100vh" ref="chartDom"></div>
+	<div class="flex flex-col h-[calc(100vh)]">
+		<div class="h-12 flex justify-center items-center">
+			<Header @update:date="handleUpdateDate"/>
+		</div>
+		<div
+			class="flex-auto"
+			style="width: 100%; height: 100%"
+			ref="chartDom"
+		></div>
+	</div>
 </template>

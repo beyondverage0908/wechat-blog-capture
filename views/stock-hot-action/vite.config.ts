@@ -4,6 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { resolve } from "path";
 import Components from "unplugin-vue-components/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
+import WindiCSS from "vite-plugin-windicss";
 
 // 路径查找
 const pathResolve = (dir: string): string => {
@@ -21,6 +22,7 @@ export default defineConfig({
     vue(),
     tsconfigPaths(),
     Components({ resolvers: [NaiveUiResolver()] }), // 为了NaiveUI进行按需引入
+    WindiCSS(),
   ],
   resolve: {
     alias,
