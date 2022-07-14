@@ -29,14 +29,19 @@ const columns = computed((): DataTableColumn[] => [
     width: 100,
   },
   {
+    title: "发生日期",
+    key: "day",
+    width: 120,
+  },
+  {
     title: "价格",
     key: "price",
-    width: 100,
+    width: 80,
   },
   {
     title: "百分比",
     key: "percent",
-    width: 100,
+    width: 80,
   },
   {
     title: "链接",

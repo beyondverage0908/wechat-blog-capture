@@ -5,6 +5,7 @@ export interface Stock {
   price: string;
   desc: string;
   descLink: string;
+  day?: string;
 }
 export interface Category {
   category: string;
