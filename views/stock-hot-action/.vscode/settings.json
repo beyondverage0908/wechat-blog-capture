@@ -3,5 +3,8 @@
   "editor.formatOnSave": true,
   "workbench.editor.enablePreview": true,
   "editor.find.autoFindInSelection": "never",
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  }
 }

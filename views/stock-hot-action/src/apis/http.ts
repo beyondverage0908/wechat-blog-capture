@@ -12,7 +12,7 @@ const baseUrl = "/pac/api";
 
 class Http {
   constructor() {}
-  get(url: string, config: AxiosRequestConfig<any> | undefined) {
+  get(url: string, config?: AxiosRequestConfig<any> | undefined) {
     return new Promise<HttpResponse>((resolve, reject) => {
       axios.get(url, { ...config, baseURL: baseUrl }).then((result) => {
         resolve(result.data);
@@ -24,7 +24,7 @@ class Http {
       });
     });
   }
-  post(url: string, config: AxiosRequestConfig<any> | undefined) {
+  post(url: string, config?: AxiosRequestConfig<any> | undefined) {
     return new Promise<HttpResponse>((resolve, reject) => {
       axios.post(url, { ...config, baseURL: baseUrl }).then((result) => {
         resolve(result.data);
