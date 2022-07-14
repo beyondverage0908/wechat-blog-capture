@@ -28,6 +28,9 @@ router.get("/today", async (ctx) => {
     ctx.success("触发爬取成功");
   }
 });
+/**
+ * 获取指定范围的异动数据
+ */
 router.get("/action", async (ctx) => {
   const { startDate, endDate } = ctx.query;
   if (!startDate || !endDate) {

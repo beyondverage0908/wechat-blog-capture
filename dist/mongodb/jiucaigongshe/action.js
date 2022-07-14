@@ -85,6 +85,7 @@ const queryActionOfRange = async (dateRange) => {
             time: s.time,
             desc: s.desc,
             descLink: s.desc_link,
+            day: item.day,
         }));
         results.push(m);
     }
