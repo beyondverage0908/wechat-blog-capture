@@ -6,7 +6,7 @@ declare module "koa" {
   // DefaultContext 可以扩展 context
   interface DefaultContext {
     success: (
-      data?: Dictionary | string | number | null,
+      data?: Dictionary | string | number | boolean | null,
       code?: string | number,
       message?: string
     ) => void;

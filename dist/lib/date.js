@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dayjs_1 = __importDefault(require("dayjs"));
 exports.default = {
     format(date) {
-        const fdate = new Date() || date;
+        const fdate = date || new Date();
         return (0, dayjs_1.default)(fdate).format("YYYY-MM-DD");
     },
     fullFormat(date) {
-        const fdate = new Date() || date;
+        const fdate = date || new Date();
         return (0, dayjs_1.default)(fdate).format("YYYY-MM-DD HH:mm:ss");
     },
     range(startDate, endDate) {

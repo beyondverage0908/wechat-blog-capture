@@ -8,6 +8,7 @@ export function useFormatResponse() {
         data,
         message: message || StatusTypes.COMMON_SUCCESS_MSG,
         code: code || StatusTypes.COMMON_SUCCESS_CODE,
+        success: true,
       };
     };
     ctx.error = (message, code, url) => {
@@ -15,6 +16,7 @@ export function useFormatResponse() {
         message: message || StatusTypes.COMMON_FAIL_MSG,
         code: code || StatusTypes.COMMON_FAIL_CODE,
         url: url || ctx.request.url,
+        success: false,
       };
     };
     await next();

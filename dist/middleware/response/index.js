@@ -9,6 +9,7 @@ function useFormatResponse() {
                 data,
                 message: message || status_1.StatusTypes.COMMON_SUCCESS_MSG,
                 code: code || status_1.StatusTypes.COMMON_SUCCESS_CODE,
+                success: true,
             };
         };
         ctx.error = (message, code, url) => {
@@ -16,6 +17,7 @@ function useFormatResponse() {
                 message: message || status_1.StatusTypes.COMMON_FAIL_MSG,
                 code: code || status_1.StatusTypes.COMMON_FAIL_CODE,
                 url: url || ctx.request.url,
+                success: false,
             };
         };
         await next();

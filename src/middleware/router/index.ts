@@ -5,6 +5,7 @@ import page from "./page";
 import wechat from "./wechat";
 import eastmoney from "./eastmoney";
 import jiucaigongshe from "./jiucaigongshe";
+import ticket from "./ticket";
 
 const router = new Router<DefaultState, Context>({ prefix: "/pac/api" });
 
@@ -18,6 +19,7 @@ router.use(
   jiucaigongshe.routes(),
   jiucaigongshe.allowedMethods()
 );
+router.use("/ticket", ticket.routes(), ticket.allowedMethods());
 
 // 首页
 router.get("/", (ctx) => {

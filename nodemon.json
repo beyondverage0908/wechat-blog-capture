@@ -12,7 +12,9 @@
   "execMap": {
     "js": "node --harmony"
   },
-  "watch": [],
+  "watch": [
+    "src/"
+  ],
   "env": {
     "NODE_ENV": "development"
   },

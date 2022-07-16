@@ -10,7 +10,7 @@ export default {
    */
   format(date?: DateType) {
     // 需要构建一个新的日期对象，在centeos系统中，如果在定时任务中仅仅调用dayjs()，他的日期对象是会被复用的，导致长期都是一个历史日期，只要在reload程序后才会读取到最新的日期
-    const fdate = new Date() || date;
+    const fdate = date || new Date();
     return dayjs(fdate).format("YYYY-MM-DD");
   },
   /**
@@ -19,7 +19,7 @@ export default {
    * @returns
    */
   fullFormat(date?: DateType) {
-    const fdate = new Date() || date;
+    const fdate = date || new Date();
     return dayjs(fdate).format("YYYY-MM-DD HH:mm:ss");
   },
   /**

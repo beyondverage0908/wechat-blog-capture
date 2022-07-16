@@ -8,18 +8,22 @@ const time_log_1 = require("./middleware/time-log");
 const error_catch_1 = require("./middleware/error-catch");
 const response_1 = require("./middleware/response");
 const router_1 = require("./middleware/router");
+const static_1 = require("./middleware/static");
 const ip_1 = require("./util/ip");
 const schedule_1 = require("./schedule");
 const mongodb_1 = require("./mongodb");
 const logger_1 = require("./middleware/logger");
+const koa_body_1 = __importDefault(require("koa-body"));
 const logger = (0, logger_1.createLogger)();
 const app = new koa_1.default();
 app
     .use((0, error_catch_1.useGlobalCatch)())
     .use((0, time_log_1.useLog)())
+    .use((0, koa_body_1.default)())
     .use((0, response_1.useFormatResponse)())
     .use((0, router_1.useRoutes)())
-    .use((0, router_1.useAllowedMethods)());
+    .use((0, router_1.useAllowedMethods)())
+    .use((0, static_1.useStatic)());
 app.listen(3000, async () => {
     const ip = (0, ip_1.getIp)();
     logger.info(`serve started in http://${ip}:3000`);

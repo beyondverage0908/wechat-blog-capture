@@ -57,7 +57,8 @@
 
   > [Node.js 库 Puppeteer 常用 API 及骚操作总结](https://juejin.cn/post/6844903997845962759)
 
-- [ ] 探索部署基于 ts 构建的 node 程序
+- [x] 探索部署基于 ts 构建的 node 程序
+  > pm2 支持通过下载 typescript 去运行 ts 程序，但是极不推荐，因为这样需要在服务端做一次 ts 转 js 的过程，这是一种负担。所以本系统还是通过在部署前，打包将 ts 转为 js，然后直接部署 js 的方式去运行。pm2 的配置可以参考项目根目录的`ecosystem.config.js`配置。打包遇到的问题： 1. 是需要将代码的路径别名`@/*`等转化为真正的路径，本项目通过一个插件`tscpaths`进行转换。 2. 如何配置`ecosystem.config.js`，参考[官网配置](https://pm2.keymetrics.io/docs/usage/application-declaration/)。如何启动`pm2 start ecosystem.config.js`
 - [x] 探索定时任务的最佳实践
   > [Node.js 之定时任务](https://juejin.cn/post/6856586709837512718)
 - [ ] 探索任务队列的最佳实践
