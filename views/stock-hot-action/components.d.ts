@@ -10,9 +10,11 @@ declare module '@vue/runtime-core' {
     NButton: typeof import('naive-ui')['NButton']
     NDataTable: typeof import('naive-ui')['NDataTable']
     NDatePicker: typeof import('naive-ui')['NDatePicker']
+    NIcon: typeof import('naive-ui')['NIcon']
     NRadioButton: typeof import('naive-ui')['NRadioButton']
     NRadioGroup: typeof import('naive-ui')['NRadioGroup']
     NSpace: typeof import('naive-ui')['NSpace']
+    NTag: typeof import('naive-ui')['NTag']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

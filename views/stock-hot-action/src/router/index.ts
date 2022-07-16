@@ -1,13 +1,16 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-// 引入
-import Home from "/@/views/jiucaigongshe/action/index.vue";
 
 // 路由信息
 let routes: RouteRecordRaw[] = [
   {
+    path: "/dashboard",
+    name: "dashboard",
+    component: () => import("/@/views/dashbord/index.vue"),
+  },
+  {
     path: "/",
     name: "home",
-    component: Home,
+    component: () => import("/@/views/jiucaigongshe/action/index.vue"),
   },
   {
     path: "/action-detail",
