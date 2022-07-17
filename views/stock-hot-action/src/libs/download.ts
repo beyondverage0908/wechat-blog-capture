@@ -9,10 +9,7 @@ type DownloadOption = {
   openTab?: boolean;
 };
 
-const baseUrl =
-  process.env.NODE_ENV === NODE_ENV.development
-    ? "http://192.168.101.7:4000"
-    : "http://111.229.62.79:3000";
+const baseUrl = process.env.NODE_ENV === NODE_ENV.development ? "" : "";
 const DOWNLOADING_MESSAGE = "正在开始下载过程中...";
 
 class Download {
@@ -108,7 +105,7 @@ class Download {
     params?: Record<string, any>,
     query?: Record<string, any>
   ) {
-    const message = window.$message.loading("开始准备开始下载", {
+    const message = window.$message.loading(DOWNLOADING_MESSAGE, {
       duration: 0,
     });
     axios

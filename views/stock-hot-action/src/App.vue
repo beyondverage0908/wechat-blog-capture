@@ -5,9 +5,9 @@ import {
   NLoadingBarProvider,
   NNotificationProvider,
   NDialogProvider,
-  useMessage,
 } from "naive-ui";
 import { zhCN, dateZhCN } from "naive-ui";
+import naive from "/@/components/naive/index.vue";
 </script>
 
 <template>
@@ -16,6 +16,7 @@ import { zhCN, dateZhCN } from "naive-ui";
       <n-message-provider :placement="'top'">
         <n-notification-provider>
           <n-dialog-provider>
+            <naive />
             <router-view></router-view>
           </n-dialog-provider>
         </n-notification-provider>

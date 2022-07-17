@@ -3,14 +3,22 @@
     <div
       class="min-h-1/4 border-1px border-solid border-gray-300 rounded-sm shadow-sm p-2"
     >
-      <n-date-picker
-        class="mb-2 w-full"
-        v-model:value="pickDate"
-        value-format="yyyy-MM-dd"
-        placeholder="请先选择小票时间后进行导出"
-        type="date"
-        clearable
-      />
+      <n-space>
+        <n-date-picker
+          class="mb-2 w-full flex-auto"
+          v-model:value="pickDate"
+          value-format="yyyy-MM-dd"
+          placeholder="请先选择小票时间后进行导出"
+          type="date"
+          clearable
+        />
+        <n-button class="flex-1" type="primary" @click="handleGetGenerage"
+          >GET导出</n-button
+        >
+        <n-button class="flex-1" type="primary" @click="handlePostGenerage"
+          >POST导出</n-button
+        >
+      </n-space>
       <n-space>
         <n-tag
           v-for="item in selectDates"
@@ -20,10 +28,6 @@
           closable
           >{{ item }}</n-tag
         >
-      </n-space>
-      <n-space class="mt-2">
-        <n-button type="primary" @click="handleGetGenerage">GET导出</n-button>
-        <n-button type="primary" @click="handlePostGenerage">POST导出</n-button>
       </n-space>
     </div>
     <div class="bg-blue-300 min-h-1/4"></div>
@@ -44,7 +48,6 @@ import { useMessage } from "naive-ui";
 const selectDates = ref<string[]>([]);
 const pickDate = ref(null);
 const message = useMessage();
-window.$message = message;
 
 const handleGetGenerage = async () => {
   const dateList = selectDates.value;
@@ -67,15 +70,19 @@ const handleClose = (str: string) => {
   }
 };
 
-watch(pickDate, () => {
-  if (!pickDate.value) {
-    return;
-  }
-  const formatDate = dayjs(pickDate.value).format("YYYY-MM-DD");
+const appendSelectDate = (date: string | number | Date) => {
+  const formatDate = dayjs(date).format("YYYY-MM-DD");
   if (selectDates.value.includes(formatDate)) {
     return;
   }
   selectDates.value.push(formatDate);
+};
+
+watch(pickDate, () => {
+  if (!pickDate.value) {
+    return;
+  }
+  appendSelectDate(pickDate.value);
   pickDate.value = null;
 });
 </script>
