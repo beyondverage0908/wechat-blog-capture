@@ -1,6 +1,6 @@
 import axios from "axios";
 import qs from "qs";
-import { useMessage } from "naive-ui";
+import { NODE_ENV } from "/@/constant/index";
 
 type DownloadOption = {
   url: string;
@@ -9,7 +9,11 @@ type DownloadOption = {
   openTab?: boolean;
 };
 
-const baseUrl = "http://172.31.227.163:4000";
+const baseUrl =
+  process.env.NODE_ENV === NODE_ENV.development
+    ? "http://192.168.101.7:4000"
+    : "http://111.229.62.79:3000";
+const DOWNLOADING_MESSAGE = "正在开始下载过程中...";
 
 class Download {
   constructor() {}
@@ -19,6 +23,9 @@ class Download {
     isFromServe = true,
     openTab = false,
   }: DownloadOption) {
+    const message = window.$message.loading(DOWNLOADING_MESSAGE, {
+      duration: 0,
+    });
     const id = "downlod-file-iframe";
     let iframe: HTMLIFrameElement = document.getElementById(
       id
@@ -61,6 +68,8 @@ class Download {
             const result = JSON.parse(String(reader.result));
             if (result.success) {
             } else {
+              message.destroy();
+              window.$message.info(result.message);
             }
           };
         } else {
@@ -82,10 +91,12 @@ class Download {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          message.destroy();
         }
       })
       .catch((err) => {
         iframe ? (iframe.src = fileUrl) : null;
+        message.destroy();
       });
   }
   /**
@@ -97,6 +108,9 @@ class Download {
     params?: Record<string, any>,
     query?: Record<string, any>
   ) {
+    const message = window.$message.loading("开始准备开始下载", {
+      duration: 0,
+    });
     axios
       .request({
         url: `${baseUrl}${exportUrl}`,
@@ -111,8 +125,10 @@ class Download {
           reader.readAsText(res.data, "utf-8");
           reader.onload = function () {
             const result = JSON.parse(String(reader.result));
+            message.destroy();
             if (result.success) {
             } else {
+              window.$message.info(result.message);
             }
           };
         } else {
@@ -129,13 +145,16 @@ class Download {
           );
           link.download = matchName
             ? decodeURIComponent(matchName[0])
-            : "证券风评列表";
+            : "下载文件";
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          message.destroy();
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        message.destroy();
+      });
   }
 }
 

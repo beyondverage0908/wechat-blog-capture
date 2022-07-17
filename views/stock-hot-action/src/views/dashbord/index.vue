@@ -1,19 +1,23 @@
 <template>
-  <div class="h-[calc(100vh)] w-[calc(100vw)]] bg-yellow-600">
-    <div class="w-1/4 p-2 bg-light-900 shadow-blue-400 min-h-1/4">
+  <div class="p-2 h-[calc(100vh)] w-[calc(100vw)]] grid grid-cols-2 gap-2">
+    <div
+      class="min-h-1/4 border-1px border-solid border-gray-300 rounded-sm shadow-sm p-2"
+    >
       <n-date-picker
-        class="mb-2 w-60"
+        class="mb-2 w-full"
         v-model:value="pickDate"
         value-format="yyyy-MM-dd"
+        placeholder="请先选择小票时间后进行导出"
         type="date"
         clearable
       />
       <n-space>
         <n-tag
-          closable
           v-for="item in selectDates"
           :key="item"
           @close="handleClose(item)"
+          round
+          closable
           >{{ item }}</n-tag
         >
       </n-space>
@@ -22,21 +26,31 @@
         <n-button type="primary" @click="handlePostGenerage">POST导出</n-button>
       </n-space>
     </div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
+    <div class="bg-blue-300 min-h-1/4"></div>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import download from "/@/libs/download";
 import dayjs from "dayjs";
+import { useMessage } from "naive-ui";
 
 const selectDates = ref<string[]>([]);
 const pickDate = ref(null);
+const message = useMessage();
+window.$message = message;
 
 const handleGetGenerage = async () => {
   const dateList = selectDates.value;
   download.downloadFile({
     url: "/pac/api/ticket/generate",
-    query: { dateList: ["2022-12-13", "2022-11-15"].join(",") },
+    query: { dateList: dateList.join(",") },
   });
 };
 
