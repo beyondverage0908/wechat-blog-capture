@@ -43,11 +43,9 @@
 import { ref, watch } from "vue";
 import download from "/@/libs/download";
 import dayjs from "dayjs";
-import { useMessage } from "naive-ui";
 
 const selectDates = ref<string[]>([]);
 const pickDate = ref(null);
-const message = useMessage();
 
 const handleGetGenerage = async () => {
   const dateList = selectDates.value;
