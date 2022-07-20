@@ -27,6 +27,23 @@ const columns = computed((): DataTableColumn[] => [
     title: "证券代码",
     key: "code",
     width: 100,
+    render: (row) => {
+      const code: string = row.code as string;
+      if (!code) return;
+      return h(
+        "a",
+        {
+          style: {
+            textDecoration: "underline",
+            cursor: "pointer",
+          },
+          onClick: () => {
+            window.open(`http://quote.eastmoney.com/${code}.html`, "_blank");
+          },
+        },
+        code
+      );
+    },
   },
   {
     title: "发生日期",
