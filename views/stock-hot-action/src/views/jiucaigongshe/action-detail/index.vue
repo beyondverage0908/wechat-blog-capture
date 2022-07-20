@@ -1,5 +1,5 @@
 <template>
-  <n-data-table striped :data="tableData" :columns="columns" />
+  <n-data-table :data="tableData" :columns="columns" />
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref, h } from "vue";
