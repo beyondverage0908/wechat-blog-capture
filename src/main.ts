@@ -4,6 +4,7 @@ import { useGlobalCatch } from "@/middleware/error-catch";
 import { useFormatResponse } from "@/middleware/response";
 import { useRoutes, useAllowedMethods } from "@/middleware/router";
 import { useStatic } from "@/middleware/static";
+import { useCompress } from "@/middleware/compression";
 import { getIp } from "@/util/ip";
 import { initScheduleJobs } from "@/schedule";
 import { initMongoose } from "@/mongodb";
@@ -16,6 +17,7 @@ const app = new Koa();
 app
   .use(useGlobalCatch())
   .use(useLog())
+  .use(useCompress())
   .use(koaBody())
   .use(useFormatResponse())
   .use(useRoutes())

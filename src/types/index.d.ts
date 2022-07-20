@@ -11,6 +11,7 @@ declare module "koa" {
       message?: string
     ) => void;
     error: (message?: string, code?: string | number, url?: string) => void;
+    compress?: boolean;
   }
   // DefaultState 可以扩展 state
   interface DefaultState {}

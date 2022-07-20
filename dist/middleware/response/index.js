@@ -4,6 +4,7 @@ exports.useFormatResponse = void 0;
 const status_1 = require("../../constant/status");
 function useFormatResponse() {
     return async (ctx, next) => {
+        ctx.compress = true;
         ctx.success = (data, code, message) => {
             ctx.body = {
                 data,

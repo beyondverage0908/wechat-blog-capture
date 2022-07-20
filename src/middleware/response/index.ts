@@ -3,6 +3,8 @@ import { StatusTypes } from "@/constant/status";
 
 export function useFormatResponse() {
   return async (ctx: Context, next: Next) => {
+    // 是否启用压缩
+    ctx.compress = true;
     ctx.success = (data, code, message) => {
       ctx.body = {
         data,
