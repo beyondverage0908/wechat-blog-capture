@@ -1,0 +1,27 @@
+2022-07-21 22:12:54 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:13:23 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:14:05 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:14:39 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:15:28 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:15:50 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:17:00 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:17:18 INFO TimeLog avg.local /pac/api/ths/ljqd GET 0.015s
+2022-07-21 22:20:30 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:20:32 FATAL ErrorCatch avg.local GET /pac/api/ths/ljqd 404
+2022-07-21 22:20:32 FATAL ErrorCatch avg.local {"message":"Request failed with status code 401","name":"AxiosError","config":{"transitional":{"silentJSONParsing":true,"forcedJSONParsing":true,"clarifyTimeoutError":false},"transformRequest":[null],"transformResponse":[null],"timeout":0,"xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN","maxContentLength":-1,"maxBodyLength":-1,"env":{},"headers":{"Accept":"application/json, text/plain, */*","User-Agent":"axios/0.27.2"},"method":"get","url":"http://data.10jqka.com.cn/rank/ljqd/field/count/order/desc/ajax/1/free/1/page/1/free/1/"},"code":"ERR_BAD_REQUEST","status":401}
+2022-07-21 22:22:18 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:22:21 INFO TimeLog avg.local /pac/api/ths/ljqd GET 0.092s
+2022-07-21 22:23:04 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:23:07 INFO TimeLog avg.local /pac/api/ths/ljqd GET 0.103s
+2022-07-21 22:26:08 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:27:21 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:28:10 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:28:28 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:28:34 INFO TimeLog avg.local /pac/api/ths/ljqd GET 3.405s
+2022-07-21 22:30:42 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:30:58 INFO TimeLog avg.local /pac/api/ths/ljqd GET 3.459s
+2022-07-21 22:34:08 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:34:24 INFO TimeLog avg.local /pac/api/ths/ljqd GET 3.373s
+2022-07-21 22:39:13 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:39:47 INFO NormalLog avg.local serve started in http://192.168.101.7:3000
+2022-07-21 22:39:53 INFO TimeLog avg.local /pac/api/ths/ljqd GET 3.659s
