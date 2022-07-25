@@ -53,9 +53,7 @@ router.get("/action", async (ctx) => {
     }
   });
   // 倒序排列指定时间范围内的数据
-  const sortArray = Array.from(map.values()).sort(
-    (a, b) => b.number - a.number
-  );
+  const sortArray = Array.from(map.values()).sort((a, b) => b.number - a.number);
   ctx.success(sortArray);
 });
 
