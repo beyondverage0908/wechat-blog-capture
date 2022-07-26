@@ -1,0 +1,1 @@
+import { THSCaptchTypeEnum } from "./tool";
