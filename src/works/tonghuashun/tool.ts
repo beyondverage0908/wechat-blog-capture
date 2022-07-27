@@ -104,11 +104,18 @@ export const activeLoopNextPage = (totalPage: number, page: Page) => {
     if (totalPage <= 0) {
       return resolve(false);
     }
-    const xpaths = await page.$x(NEXT_PAGE_XPATH);
-    const nextHandle = xpaths[0] ? xpaths[0] : null;
-    if (nextHandle) {
-      await nextHandle.click({ delay: 10 });
-    }
+    const timer = setInterval(async () => {
+      const currPage = await getCurrentPageNumber(page);
+      const xpaths = await page.$x(NEXT_PAGE_XPATH);
+      const nextHandle = xpaths[0] ? xpaths[0] : null;
+      if (nextHandle) {
+        await nextHandle.click({ delay: 10 });
+      }
+      if (currPage >= totalPage) {
+        clearInterval(timer);
+        resolve(true);
+      }
+    }, 1000);
   });
 };
 /**
@@ -145,9 +152,9 @@ export const startCapture = (url: string, type: THSCaptchTypeEnum) => {
           if (dataMap.has(String(currPage))) return;
           const data = await getEveryPageInfo(page);
           dataMap.set(String(currPage), data);
+          console.log("页数： ", currPage, totalPage);
           if (currPage < totalPage) {
             logger.info(`开始爬取：${url} ${type} - 正在爬取${currPage}页`);
-            await activeLoopNextPage(totalPage, page);
           } else {
             logger.info(`开始爬取：${url} ${type} - 结束了`);
             resolve(converArrayToLiangJia(convertMapToArray(dataMap), type, currentDate));
@@ -169,20 +176,23 @@ export const startCapture = (url: string, type: THSCaptchTypeEnum) => {
         Object.defineProperty(navigator, "webdriver", { get: () => undefined });
         Object.defineProperty(navigator, "doNotTrack", { get: () => "1" });
       });
-      await page.goto(url, { waitUntil: "networkidle2" });
+      await page.goto(url, { waitUntil: "load" });
       totalPage = await getCurrentTotalPage(page);
       currentDate = await getCurrentDate(page);
+      console.log("a xi ba: ", currentDate, totalPage);
       // 不能用for循环做，否则会报错，使用定时器做
       if (totalPage > 0) {
-        // await activeLoopNextPage(totalPage, page);
+        await activeLoopNextPage(totalPage, page);
         // resolve(`成功获取${totalPage}页数据`);
         // resolve(Object.fromEntries(dataMap));
       } else {
         reject("没有可以爬取的数据");
       }
       // await page.screenshot({ path: `ths-${Date.now()}.png`, fullPage: true });
-      // await page.close();
-      // await browser.close();
+      setTimeout(async () => {
+        await page.close();
+        await browser.close();
+      }, 10000);
     } catch (error) {
       reject("获取失败");
       throw error;

@@ -1,5 +1,0 @@
-2022-07-14 17:05:31 INFO NormalLog DESKTOP-AGI7VEF serve started in http://172.31.227.163:3000
-2022-07-14 17:07:38 INFO NormalLog DESKTOP-AGI7VEF serve started in http://172.31.227.163:3000
-2022-07-14 17:11:03 INFO NormalLog DESKTOP-AGI7VEF serve started in http://172.31.227.163:3000
-2022-07-14 17:11:15 INFO TimeLog DESKTOP-AGI7VEF /pac/api/jiucaigongshe/action?startDate=2022-07-11&endDate=2022-07-14 GET 0.242s
-2022-07-14 17:11:30 INFO TimeLog DESKTOP-AGI7VEF /pac/api/jiucaigongshe/action?startDate=2022-07-06&endDate=2022-07-14 GET 0.15s

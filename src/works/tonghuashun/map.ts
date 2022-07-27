@@ -20,16 +20,20 @@ export const convertMapToArray = (map: Map<string, string[]>) => {
 export const converArrayToLiangJia = (stocks: string[], thsType: THSCaptchTypeEnum, date: string) => {
   return stocks.map((str) => {
     const stock: LiangJiaStock = {};
-    const arr = str.split(",");
-    stock.code = arr[1] || "";
-    stock.name = arr[2] || "";
-    stock.price = Number(arr[3]) !== null ? Number(arr[3]) : undefined;
-    stock.days = Number(arr[4]) !== null ? Number(arr[4]) : undefined;
-    stock.percent = Number(arr[5]) !== null ? Number(arr[5]) : undefined;
-    stock.overrate = Number(arr[6]) !== null ? Number(arr[6]) : undefined;
-    stock.industry = arr[7] || "";
-    stock.type = String(thsType);
-    stock.date = date;
-    return stock;
+    try {
+      const arr = str.split(",");
+      stock.code = arr[1] || "";
+      stock.name = arr[2] || "";
+      stock.price = arr[3] !== "-" ? Number(arr[3]) : undefined;
+      stock.days = arr[4] !== "-" ? Number(arr[4]) : undefined;
+      stock.percent = arr[5] !== "-" ? Number(arr[5]) : undefined;
+      stock.overrate = arr[6] !== "-" ? Number(arr[6]) : undefined;
+      stock.industry = arr[7] || "";
+      stock.type = String(thsType);
+      stock.date = date;
+      return stock;
+    } catch (error) {
+      return stock;
+    }
   });
 };
