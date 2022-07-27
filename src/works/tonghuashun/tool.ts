@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
 import { Page } from "puppeteer";
+import { convertMapToArray, converArrayToLiangJia } from "./map";
+import { createLogger } from "@/middleware/logger";
+import { LiangJiaStock } from "./types";
+const logger = createLogger("TongHuaShun");
 
 type ThsCaptch = {
   [key in allThsCaptch]: {
@@ -14,6 +18,7 @@ const PAGE_INFO_SELECTOR = ".J-ajax-page .page_info";
 const NEXT_PAGE_XPATH = "//*[@id='J-ajax-main']/div/a[contains(., '下一页')]";
 const TARGET_TABLE_SELECTOR = "#J-ajax-main .J-ajax-table tbody";
 const CURRENT_PAGE_SELECTOR = ".J-ajax-page .cur";
+const CURRENT_DATE_XPATH = '//*[@id="datacenter_change_content"]/div[1]/div';
 
 export enum THSCaptchTypeEnum {
   ljqd = "ljqd",
@@ -47,6 +52,17 @@ export const getCurrentTotalPage = async (page: Page) => {
   }
 };
 /**
+ * 获取爬取页面当前数据的日期
+ * @param page
+ * @returns
+ */
+export const getCurrentDate = async (page: Page) => {
+  const [element] = await page.$x(CURRENT_DATE_XPATH);
+  const text = await page.evaluate((node) => node.textContent, element);
+  const split = text?.trim().split("：");
+  return split ? split[1] : "";
+};
+/**
  * 获取每页的数据
  * @param page
  * @returns
@@ -74,7 +90,7 @@ export const getEveryPageInfo = async (page: Page) => {
 export const getCurrentPageNumber = async (page: Page) => {
   return await page.waitForSelector(TARGET_TABLE_SELECTOR).then(async () => {
     const currPage = await page.$eval(CURRENT_PAGE_SELECTOR, (node) => node.textContent);
-    return currPage;
+    return Number(currPage);
   });
 };
 /**
@@ -84,23 +100,15 @@ export const getCurrentPageNumber = async (page: Page) => {
  * @returns
  */
 export const activeLoopNextPage = (totalPage: number, page: Page) => {
-  return new Promise<boolean>((resolve) => {
+  return new Promise<boolean>(async (resolve) => {
     if (totalPage <= 0) {
       return resolve(false);
     }
-    let pcCount = 1;
-    const timer = setInterval(async () => {
-      if (pcCount > totalPage) {
-        clearInterval(timer);
-        return resolve(true);
-      }
-      const xpaths = await page.$x(NEXT_PAGE_XPATH);
-      const nextHandle = xpaths[0] ? xpaths[0] : null;
-      if (nextHandle) {
-        await nextHandle.click({ delay: 10 });
-      }
-      pcCount += 1;
-    }, 1000);
+    const xpaths = await page.$x(NEXT_PAGE_XPATH);
+    const nextHandle = xpaths[0] ? xpaths[0] : null;
+    if (nextHandle) {
+      await nextHandle.click({ delay: 10 });
+    }
   });
 };
 /**
@@ -110,15 +118,17 @@ export const activeLoopNextPage = (totalPage: number, page: Page) => {
  * @returns
  */
 export const startCapture = (url: string, type: THSCaptchTypeEnum) => {
-  return new Promise<string | object>(async (resolve, reject) => {
+  logger.info(`开始爬取：${url} ${type}`);
+  return new Promise<LiangJiaStock[]>(async (resolve, reject) => {
     const browser = await puppeteer.launch({
-      headless: false,
-      devtools: true,
+      headless: true,
+      devtools: false,
       args: ["--no-sandbox"],
     });
     const page = await browser.newPage();
     try {
       let totalPage = 0;
+      let currentDate = "";
       let dataMap = new Map<string, string[]>();
       await page.setUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
@@ -132,10 +142,16 @@ export const startCapture = (url: string, type: THSCaptchTypeEnum) => {
         if (res.url().includes(url)) {
           const currPage = await getCurrentPageNumber(page);
           if (!currPage) return;
-          if (dataMap.has(currPage)) return;
+          if (dataMap.has(String(currPage))) return;
           const data = await getEveryPageInfo(page);
-          dataMap.set(currPage, data);
-          console.log("response end", currPage, data[0]);
+          dataMap.set(String(currPage), data);
+          if (currPage < totalPage) {
+            logger.info(`开始爬取：${url} ${type} - 正在爬取${currPage}页`);
+            await activeLoopNextPage(totalPage, page);
+          } else {
+            logger.info(`开始爬取：${url} ${type} - 结束了`);
+            resolve(converArrayToLiangJia(convertMapToArray(dataMap), type, currentDate));
+          }
         }
       });
 
@@ -155,17 +171,18 @@ export const startCapture = (url: string, type: THSCaptchTypeEnum) => {
       });
       await page.goto(url, { waitUntil: "networkidle2" });
       totalPage = await getCurrentTotalPage(page);
+      currentDate = await getCurrentDate(page);
       // 不能用for循环做，否则会报错，使用定时器做
       if (totalPage > 0) {
-        await activeLoopNextPage(totalPage, page);
+        // await activeLoopNextPage(totalPage, page);
         // resolve(`成功获取${totalPage}页数据`);
-        resolve(Object.fromEntries(dataMap));
+        // resolve(Object.fromEntries(dataMap));
       } else {
         reject("没有可以爬取的数据");
       }
       // await page.screenshot({ path: `ths-${Date.now()}.png`, fullPage: true });
-      await page.close();
-      await browser.close();
+      // await page.close();
+      // await browser.close();
     } catch (error) {
       reject("获取失败");
       throw error;

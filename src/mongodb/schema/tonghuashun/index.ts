@@ -9,5 +9,6 @@ export const LiangJiaSchema = new mongoose.Schema({
   overrate: SchemaTypes.Number, // 累计换手率
   industry: SchemaTypes.String, // 所属行业
   days: SchemaTypes.Number, // 量价齐跌/升天数
-  type: SchemaTypes.Number, // 跌或升
+  type: SchemaTypes.String, // 跌或升
+  date: SchemaTypes.String, // 爬取天数
 });
