@@ -16,7 +16,9 @@ function formatDate(dateString: string): string {
   const hour = getRandomArbitrary(18, 21);
   const minute = getRandomArbitrary(0, 59);
   const second = getRandomArbitrary(0, 59);
-  return `${dateTool.format(dateString)} ${hour}:${minute}:${second}`;
+  return `${dateTool.format(dateString)} ${hour}:${minute < 10 ? "0" + minute : minute}:${
+    second < 10 ? "0" + second : second
+  }`;
 }
 
 router.post("/generate", async (ctx) => {
