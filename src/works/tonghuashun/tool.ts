@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 import { Page } from "puppeteer";
 import { convertMapToArray, converArrayToLiangJia } from "./map";
 import { createLogger } from "@/middleware/logger";
-import { LiangJiaStock } from "./types";
+import { LiangJiaStock, THSCaptchTypeEnum } from "@/types/tonghuashun";
 const logger = createLogger("TongHuaShun");
 
 type ThsCaptch = {
@@ -20,10 +20,6 @@ const TARGET_TABLE_SELECTOR = "#J-ajax-main .J-ajax-table tbody";
 const CURRENT_PAGE_SELECTOR = ".J-ajax-page .cur";
 const CURRENT_DATE_XPATH = '//*[@id="datacenter_change_content"]/div[1]/div';
 
-export enum THSCaptchTypeEnum {
-  ljqd = "ljqd",
-  ljqs = "ljqs",
-}
 export const thsCaptch: ThsCaptch = {
   ljqd: {
     url: "http://data.10jqka.com.cn/rank/ljqd/",

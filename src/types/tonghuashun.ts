@@ -1,3 +1,8 @@
+export enum THSCaptchTypeEnum {
+  ljqd = "ljqd",
+  ljqs = "ljqs",
+}
+
 export interface LiangJiaStock {
   name?: string; // 股票名称
   code?: string; // 股票代码

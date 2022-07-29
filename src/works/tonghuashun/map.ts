@@ -1,5 +1,5 @@
-import { THSCaptchTypeEnum } from "./tool";
-import { LiangJiaStock } from "./types";
+import { THSCaptchTypeEnum } from "@/types/tonghuashun";
+import { LiangJiaStock } from "@/types/tonghuashun";
 
 /**
  * 转换数据
