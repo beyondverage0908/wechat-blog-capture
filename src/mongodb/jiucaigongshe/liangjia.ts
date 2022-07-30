@@ -3,7 +3,7 @@ import { t_jcgs_category, t_jcgs_stock } from "@/mongodb/model";
 import { CategorySchema, StockSchema } from "../schema/jiucaigongshe/hot";
 import { Stock } from "../../types/jiucaigongshe";
 
-function mapStock(stock: Stock): Stock {
+function mapStock(stock: any): Stock {
   return {
     name: stock.name,
     code: stock.code,
@@ -11,7 +11,7 @@ function mapStock(stock: Stock): Stock {
     percent: stock.percent,
     time: stock.time,
     desc: stock.desc,
-    descLink: stock.descLink,
+    descLink: stock.desc_link,
   };
 }
 /**
