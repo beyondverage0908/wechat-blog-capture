@@ -47,14 +47,23 @@ export const saveLiangJiaData = async (stocks: LiangJiaStock[]) => {
  * @param type
  * @param date
  */
-export const queryLiangJia = async (date: string, type: THSCaptchTypeEnum): Promise<Stock[]> => {
+export const queryLiangJia = async (
+  liangjiaDateRange: string[],
+  jcgsHotDateRange: string[],
+  type: THSCaptchTypeEnum
+): Promise<Stock[]> => {
   const Model = mongoose.model(t_ths_liangjia, LiangJiaSchema);
-  const models = await Model.find({ date: date, type: type });
-  const stocks = await queryRangeHotStocks(["2022-07-29", "2022-07-28"]);
+  const models = await Model.find({ date: { $in: liangjiaDateRange }, type: type });
+  const stocks = await queryRangeHotStocks(jcgsHotDateRange);
   const liangjiaStocks = models.map((item) => mapLiangJiaStock(item));
   return crossStocks(stocks, liangjiaStocks);
 };
-
+/**
+ * 计算出同花顺的量价行为和韭菜公社股票异动的股票交集
+ * @param jiucaigongsheStocks
+ * @param thsLiangjiaStocks
+ * @returns
+ */
 function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaStock[]): Stock[] {
   const findStocks: Stock[] = [];
   thsLiangjiaStocks.forEach((stock) => {
@@ -62,7 +71,11 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
       return;
     }
     const find = jiucaigongsheStocks.find((item) => item.name === stock.name);
-    if (find) {
+    if (!find) {
+      return;
+    }
+    const exist = findStocks.find((item) => item.name === find.name);
+    if (!exist) {
       findStocks.push(find);
     }
   });

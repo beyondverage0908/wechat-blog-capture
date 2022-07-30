@@ -3,7 +3,7 @@ import Router from "koa-router";
 import { startCapture, thsCaptch } from "@/works/tonghuashun/tool";
 import { saveLiangJiaData, queryLiangJia } from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
-import dayjs from "dayjs";
+import dateTool from "@/lib/date";
 
 const router = new Router<DefaultState, Context>();
 
@@ -23,9 +23,18 @@ router.get("/ljqs", async (ctx) => {
 });
 
 router.get("/hotljqd", async (ctx) => {
-  const date = dayjs().format("YYYY-MM-DD");
-  const data = await queryLiangJia(date, THSCaptchTypeEnum.ljqd);
-  ctx.success(data || {});
+  const { liangjiaDays, jcgsDays } = ctx.query;
+  if (!liangjiaDays || !jcgsDays) {
+    ctx.error("liangjiaDays, jcgsDays参数未传，无法查询");
+    return;
+  }
+  const liangjiaDateRange = dateTool.recentRange(2);
+  const jcgsDateRange = dateTool.recentRange(4);
+  const data = await queryLiangJia(liangjiaDateRange, jcgsDateRange, THSCaptchTypeEnum.ljqd);
+  ctx.success({
+    total: data.length,
+    data: data,
+  });
 });
 
 export default router;
