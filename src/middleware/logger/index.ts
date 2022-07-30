@@ -27,6 +27,7 @@ log4js.configure({
       keepFileExt: true,
       // 输出的日志文件名是都始终包含 pattern 日期结尾
       alwaysIncludePattern: true,
+      numBackups: 7,
     },
   },
   categories: {

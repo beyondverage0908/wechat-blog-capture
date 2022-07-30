@@ -4,6 +4,8 @@ import { startCapture, thsCaptch } from "@/works/tonghuashun/tool";
 import { saveLiangJiaData, queryLiangJia } from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
 import dateTool from "@/lib/date";
+import { createLogger } from "@/logger";
+const logger = createLogger("LiangJiaFenXi");
 
 const router = new Router<DefaultState, Context>();
 
@@ -23,14 +25,21 @@ router.get("/ljqs", async (ctx) => {
 });
 
 router.get("/hotljqd", async (ctx) => {
-  const { liangjiaDays, jcgsDays } = ctx.query;
-  if (!liangjiaDays || !jcgsDays) {
-    ctx.error("liangjiaDays, jcgsDays参数未传，无法查询");
+  const { recentLiangjiaDay, recentJcgsDay, seriesDay = 2 } = ctx.query;
+  if (!recentLiangjiaDay || !recentJcgsDay) {
+    ctx.error("recentLiangjiaDay, recentJcgsDay参数未传，无法查询");
     return;
   }
-  const liangjiaDateRange = dateTool.recentRange(2);
-  const jcgsDateRange = dateTool.recentRange(4);
-  const data = await queryLiangJia(liangjiaDateRange, jcgsDateRange, THSCaptchTypeEnum.ljqd);
+  const liangjiaDateRange = dateTool.recentRange(Number(recentLiangjiaDay));
+  const jcgsDateRange = dateTool.recentRange(Number(recentJcgsDay));
+  logger.info(
+    JSON.stringify(
+      `量价分析 recentLiangjiaDay${JSON.stringify(liangjiaDateRange)} recentJcgsDay${JSON.stringify(
+        jcgsDateRange
+      )} seriesDay: ${seriesDay}`
+    )
+  );
+  const data = await queryLiangJia(liangjiaDateRange, jcgsDateRange, Number(seriesDay), THSCaptchTypeEnum.ljqd);
   ctx.success({
     total: data.length,
     data: data,

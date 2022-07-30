@@ -43,29 +43,44 @@ export const saveLiangJiaData = async (stocks: LiangJiaStock[]) => {
 };
 
 /**
- * 查询指定日期的量价
- * @param type
- * @param date
+ *
+ * @param liangjiaDateRange 量价爬取的时间范围
+ * @param jcgsHotDateRange  韭菜公社热点爬取的时间范围
+ * @param dayNumber         量价关系连续天数（比如：量价齐跌的天数）
+ * @param type              量价关系（量价齐跌，量价起升）
+ * @returns
  */
 export const queryLiangJia = async (
   liangjiaDateRange: string[],
   jcgsHotDateRange: string[],
+  dayNumber: number,
   type: THSCaptchTypeEnum
 ): Promise<Stock[]> => {
-  const Model = mongoose.model(t_ths_liangjia, LiangJiaSchema);
-  const models = await Model.find({ date: { $in: liangjiaDateRange }, type: type });
+  const LJModel = mongoose.model(t_ths_liangjia, LiangJiaSchema);
+  const models = await LJModel.find({
+    date: {
+      $in: liangjiaDateRange,
+    },
+    days: {
+      $gte: dayNumber,
+    },
+    type: type,
+  });
   const stocks = await queryRangeHotStocks(jcgsHotDateRange);
   const liangjiaStocks = models.map((item) => mapLiangJiaStock(item));
   return crossStocks(stocks, liangjiaStocks);
 };
+
+type ThsStock = Stock & { thsIndustry?: string; thsSeriesDay?: number; thsOverrate?: number; thsDate?: string };
+
 /**
  * 计算出同花顺的量价行为和韭菜公社股票异动的股票交集
  * @param jiucaigongsheStocks
  * @param thsLiangjiaStocks
  * @returns
  */
-function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaStock[]): Stock[] {
-  const findStocks: Stock[] = [];
+function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaStock[]): ThsStock[] {
+  const findStocks: ThsStock[] = [];
   thsLiangjiaStocks.forEach((stock) => {
     if (!stock.code) {
       return;
@@ -76,7 +91,13 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
     }
     const exist = findStocks.find((item) => item.name === find.name);
     if (!exist) {
-      findStocks.push(find);
+      findStocks.push({
+        ...find,
+        thsIndustry: stock.industry,
+        thsSeriesDay: stock.days,
+        thsOverrate: stock.overrate,
+        thsDate: stock.date,
+      });
     }
   });
   return findStocks;
