@@ -34,7 +34,7 @@ const customRange = ref<[number, number]>();
 const datePickList = ref<DatePickType[]>([
   {
     label: "当日",
-    value: 0,
+    value: 1,
   },
   {
     label: "最近两日",
@@ -78,22 +78,20 @@ function getDateRange(lastday: number): Record<string, string> {
 }
 
 watch(pickValue, () => {
-  const range = getDateRange(pickValue.value);
-  emit("update:date", range);
+  emit("update:date", pickValue.value);
 });
 watch(customRange, () => {
   if (customRange.value?.length) {
     const startDate = dayjs(customRange.value[0]).format("YYYY-MM-DD");
     const endDate = dayjs(customRange.value[1]).format("YYYY-MM-DD");
     emit("update:date", {
-      startDay: startDate,
-      endDay: endDate,
+      startDate: startDate,
+      endDate: endDate,
     });
   }
 });
 onMounted(() => {
-  const range = getDateRange(pickValue.value);
-  emit("update:date", range);
+  emit("update:date", pickValue.value);
 });
 
 const handlePickTodayAction = async () => {

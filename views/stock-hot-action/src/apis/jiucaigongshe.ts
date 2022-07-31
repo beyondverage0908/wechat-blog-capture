@@ -1,16 +1,19 @@
 import http from "./http";
 
+type DateRange = { startDate: string; endDate: string };
+
 /**
  * 获取指定范围时间内的异动数据
  * @param startDate
  * @param endDate
  * @returns
  */
-export const getActionRange = (startDate: string, endDate: string) => {
+export const getActionRange = (recentDay?: number, range?: DateRange) => {
   return http.get("/jiucaigongshe/action", {
     params: {
-      startDate,
-      endDate,
+      recentDay,
+      startDate: range?.startDate,
+      endDate: range?.endDate,
     },
   });
 };

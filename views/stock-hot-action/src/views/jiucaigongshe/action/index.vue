@@ -17,18 +17,17 @@ interface TreeNode {
   data?: Stock[];
   children?: TreeNode[];
 }
+type DateRange = { startDate: string; endDate: string };
 // useRouter只能在setup中使用，直接在@click的方法中，是无法拿到router对象? -- 很奇怪
 // Returns the router instance. Equivalent to using $router inside templates. Must be called inside of setup().
 const router = useRouter();
 const chartDom = ref<HTMLElement>();
-async function renderChart(startDay: string, endDay: string) {
+async function renderChart(recentDay?: number, range?: DateRange) {
   let option: EChartsOption;
   let myChart = echarts.init(chartDom.value!);
-  const startDate = startDay;
-  const endDate = endDay;
 
   myChart.showLoading();
-  const data = await getActionRange(startDate, endDate);
+  const data = await getActionRange(recentDay, range);
   myChart.hideLoading();
   if (data.code !== "200") {
     return;
@@ -129,8 +128,12 @@ async function renderChart(startDay: string, endDay: string) {
   );
 }
 // 获取时间变更
-const handleUpdateDate = (range: { startDay: string; endDay: string }) => {
-  renderChart(range.startDay, range.endDay);
+const handleUpdateDate = (recentDay: number | DateRange) => {
+  if (typeof recentDay === "number") {
+    renderChart(recentDay, undefined);
+  } else {
+    renderChart(undefined, recentDay);
+  }
 };
 const handleToDashboard = () => {
   router.push({
