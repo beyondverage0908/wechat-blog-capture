@@ -32,13 +32,17 @@ router.get("/today", async (ctx) => {
  * 获取指定范围的异动数据
  */
 router.get("/action", async (ctx) => {
-  const { startDate, endDate } = ctx.query;
-  if (!startDate || !endDate) {
+  const { recentDay, startDate, endDate } = ctx.query;
+  if (!recentDay && !startDate && !endDate) {
     ctx.error("时间范围必填");
     return;
   }
+  console.log(recentDay, startDate, endDate);
   // 查询数据库中的数据
-  const dateRange = date.range(startDate as string, endDate as string);
+  let dateRange = date.range(startDate as string, endDate as string);
+  if (Number(recentDay)) {
+    dateRange = date.recentRange(Number(recentDay));
+  }
   const result = await queryActionOfRange(dateRange);
   // 对原始数据进行范围内的求和处理
   const map = new Map();
