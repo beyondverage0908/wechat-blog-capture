@@ -23,7 +23,7 @@ router.get("/ljqs", async (ctx) => {
   await saveLiangJiaData(result);
   ctx.success(result);
 });
-
+// 热门赛道量价齐跌
 router.get("/hotljqd", async (ctx) => {
   const { recentLiangjiaDay, recentJcgsDay, seriesDay = 2 } = ctx.query;
   if (!recentLiangjiaDay || !recentJcgsDay) {
@@ -40,6 +40,28 @@ router.get("/hotljqd", async (ctx) => {
     )
   );
   const data = await queryLiangJia(liangjiaDateRange, jcgsDateRange, Number(seriesDay), THSCaptchTypeEnum.ljqd);
+  ctx.success({
+    total: data.length,
+    data: data,
+  });
+});
+// 热门赛道量价齐升
+router.get("/hotljqs", async (ctx) => {
+  const { recentLiangjiaDay, recentJcgsDay, seriesDay = 2 } = ctx.query;
+  if (!recentLiangjiaDay || !recentJcgsDay) {
+    ctx.error("recentLiangjiaDay, recentJcgsDay参数未传，无法查询");
+    return;
+  }
+  const liangjiaDateRange = dateTool.recentRange(Number(recentLiangjiaDay));
+  const jcgsDateRange = dateTool.recentRange(Number(recentJcgsDay));
+  logger.info(
+    JSON.stringify(
+      `量价分析 recentLiangjiaDay${JSON.stringify(liangjiaDateRange)} recentJcgsDay${JSON.stringify(
+        jcgsDateRange
+      )} seriesDay: ${seriesDay}`
+    )
+  );
+  const data = await queryLiangJia(liangjiaDateRange, jcgsDateRange, Number(seriesDay), THSCaptchTypeEnum.ljqs);
   ctx.success({
     total: data.length,
     data: data,
