@@ -23,6 +23,7 @@ export const queryRangeHotStocks = async (dateRange: string[]): Promise<Stock[]>
   const CategoryModel = await mongoose.model(t_jcgs_category, CategorySchema);
   const StockModel = await mongoose.model(t_jcgs_stock, StockSchema);
   const categorys = await CategoryModel.find({ day: { $in: dateRange } });
+  // categorys.map(item => ({ category: item.category, number: item.number }))
   let stocks: Stock[] = [];
   for await (const cate of categorys) {
     const findStocks = await StockModel.find({ category_id: cate._id });
