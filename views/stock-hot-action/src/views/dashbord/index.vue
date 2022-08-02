@@ -1,7 +1,7 @@
 <template>
   <div class="p-2 h-[calc(100vh)] w-[calc(100vw)]] grid grid-cols-2 gap-2">
     <div
-      class="min-h-1/4 border-1px border-solid border-gray-300 rounded-sm shadow-sm p-2"
+      class="min-h-1/2 border-1px border-solid border-gray-300 rounded-sm shadow-sm p-2"
     >
       <n-space>
         <n-date-picker
@@ -30,10 +30,6 @@
         >
       </n-space>
     </div>
-    <div class="bg-blue-300 min-h-1/4"></div>
-    <div class="bg-blue-300 min-h-1/4"></div>
-    <div class="bg-blue-300 min-h-1/4"></div>
-    <div class="bg-blue-300 min-h-1/4"></div>
     <div class="bg-blue-300 min-h-1/4"></div>
     <div class="bg-blue-300 min-h-1/4"></div>
     <div class="bg-blue-300 min-h-1/4"></div>
