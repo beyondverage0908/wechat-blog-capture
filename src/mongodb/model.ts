@@ -6,3 +6,5 @@ export const t_jcgs_category = "t_jcgs_category";
 export const t_em_hq = "t_em_hq";
 // 同花顺量价表（两家齐升，量价齐跌）
 export const t_ths_liangjia = "t_ths_liangjia";
+// 同花顺量价分析的股票表
+export const t_ths_liangjia_target = "t_ths_liangjia_target";

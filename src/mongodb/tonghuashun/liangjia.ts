@@ -4,12 +4,15 @@
 
 import mongoose from "mongoose";
 import { createLogger } from "@/middleware/logger";
-import { t_ths_liangjia } from "../model";
-import { LiangJiaSchema } from "../schema/tonghuashun";
+import { t_ths_liangjia, t_ths_liangjia_target } from "../model";
+import { LiangJiaSchema, LiangJiaTargetSchema } from "../schema/tonghuashun";
 import { LiangJiaStock, THSCaptchTypeEnum } from "@/types/tonghuashun";
 import { queryRangeHotStocks } from "@/mongodb/jiucaigongshe/liangjia";
 import { Stock } from "@/types/jiucaigongshe";
+import dateTool from "@/lib/date";
 const logger = createLogger("TongHuaShunDB");
+
+type ThsStock = Stock & { thsIndustry?: string; thsSeriesDay?: number; thsOverrate?: number; thsDate?: string };
 
 function mapLiangJiaStock(stock: LiangJiaStock): LiangJiaStock {
   return {
@@ -24,7 +27,11 @@ function mapLiangJiaStock(stock: LiangJiaStock): LiangJiaStock {
     date: stock.date,
   };
 }
-
+/**
+ * 保存量价数据到数据库中
+ * @param stocks
+ * @returns
+ */
 export const saveLiangJiaData = async (stocks: LiangJiaStock[]) => {
   logger.info("开始插入同花顺数据");
   if (!stocks.length) {
@@ -55,7 +62,7 @@ export const queryLiangJia = async (
   jcgsHotDateRange: string[],
   dayNumber: number,
   type: THSCaptchTypeEnum
-): Promise<Stock[]> => {
+): Promise<ThsStock[]> => {
   const LJModel = mongoose.model(t_ths_liangjia, LiangJiaSchema);
   const models = await LJModel.find({
     date: {
@@ -70,8 +77,6 @@ export const queryLiangJia = async (
   const liangjiaStocks = models.map((item) => mapLiangJiaStock(item));
   return crossStocks(stocks, liangjiaStocks);
 };
-
-type ThsStock = Stock & { thsIndustry?: string; thsSeriesDay?: number; thsOverrate?: number; thsDate?: string };
 
 /**
  * 计算出同花顺的量价行为和韭菜公社股票异动的股票交集
@@ -102,3 +107,12 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
   });
   return findStocks;
 }
+
+export const saveTargetLiangjia = () => {
+  const liangjiaDateRange = dateTool.recentRange(2);
+  const jcgsDateRange = dateTool.recentRange(10);
+  const seriesDay = 3; // 最低量价连续天数
+  const stocks = queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqd);
+
+  const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+};
