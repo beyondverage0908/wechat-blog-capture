@@ -12,7 +12,25 @@ import { Stock } from "@/types/jiucaigongshe";
 import dateTool from "@/lib/date";
 const logger = createLogger("TongHuaShunDB");
 
-type ThsStock = Stock & { thsIndustry?: string; thsSeriesDay?: number; thsOverrate?: number; thsDate?: string };
+type ThsStock = Stock & {
+  category?: string;
+  thsIndustry?: string;
+  thsSeriesDay?: number;
+  thsOverrate?: number;
+  thsDate?: string;
+  days?: number;
+};
+// 量价关系监控表 - 是否监控 1：监控 2：不监控 3: 暂定
+enum MonitType {
+  moniting = "1",
+  notMonit = "2",
+  waiting = "3",
+}
+// 入选方式 1：自动 2：手动入选
+enum CheckType {
+  auto = "1",
+  manual = "2",
+}
 
 function mapLiangJiaStock(stock: LiangJiaStock): LiangJiaStock {
   return {
@@ -102,17 +120,69 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
         thsSeriesDay: stock.days,
         thsOverrate: stock.overrate,
         thsDate: stock.date,
+        days: stock.days,
       });
     }
   });
   return findStocks;
 }
 
-export const saveTargetLiangjia = () => {
+export const saveTargetLiangjia = async () => {
+  logger.info("开始量价分析【量价齐升】【量价齐跌】");
   const liangjiaDateRange = dateTool.recentRange(2);
   const jcgsDateRange = dateTool.recentRange(10);
-  const seriesDay = 3; // 最低量价连续天数
-  const stocks = queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqd);
-
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  const currentDate = dateTool.format();
+  const ljqdcount = await TargetModel.find({ checkTime: currentDate, ljtype: THSCaptchTypeEnum.ljqd }).count();
+  const ljqsCount = await TargetModel.find({ checkTime: currentDate, ljtype: THSCaptchTypeEnum.ljqs }).count();
+  if (ljqdcount && ljqsCount) {
+    logger.info("已经存在当日数据，不需要继续插入");
+    return "已经存在当日数据，不需要继续插入";
+  }
+  if (!ljqdcount) {
+    const seriesDay = 3; // 连续天数
+    const stocks = await queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqd);
+    await TargetModel.insertMany(
+      stocks.map((item) => ({
+        name: item.name,
+        code: item.code,
+        monit: MonitType.waiting,
+        checkTime: currentDate,
+        uncheckTime: null,
+        checkPrice: null,
+        uncheckPrice: null,
+        price7: null,
+        price14: null,
+        checkType: CheckType.auto,
+        ljtype: THSCaptchTypeEnum.ljqd,
+        seriesDay: item.days,
+        category: item.category,
+        industry: item.thsIndustry,
+      }))
+    );
+  }
+  if (!ljqsCount) {
+    const seriesDay = 3; // 连续天数
+    const stocks = await queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqs);
+    await TargetModel.insertMany(
+      stocks.map((item) => ({
+        name: item.name,
+        code: item.code,
+        monit: MonitType.waiting,
+        checkTime: currentDate,
+        uncheckTime: null,
+        checkPrice: null,
+        uncheckPrice: null,
+        price7: null,
+        price14: null,
+        checkType: CheckType.auto,
+        ljtype: THSCaptchTypeEnum.ljqs,
+        seriesDay: item.days,
+        category: item.category,
+        industry: item.thsIndustry,
+      }))
+    );
+  }
+  logger.info("结束量价分析【量价齐升】【量价齐跌】，插入成功");
+  return "插入成功";
 };

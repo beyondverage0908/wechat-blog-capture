@@ -1,7 +1,7 @@
 import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 import { startCapture, thsCaptch } from "@/works/tonghuashun/tool";
-import { saveLiangJiaData, queryLiangJia } from "@/mongodb/tonghuashun/liangjia";
+import { saveLiangJiaData, queryLiangJia, saveTargetLiangjia } from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
 import dateTool from "@/lib/date";
 import { createLogger } from "@/logger";
@@ -66,6 +66,10 @@ router.get("/hotljqs", async (ctx) => {
     total: data.length,
     data: data,
   });
+});
+router.get("/ljtarget", async (ctx) => {
+  const result = await saveTargetLiangjia();
+  ctx.success(result);
 });
 
 export default router;

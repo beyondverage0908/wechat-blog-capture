@@ -1,6 +1,6 @@
 import schedule from "node-schedule";
 import { startCapture, thsCaptch } from "./tool";
-import { saveLiangJiaData } from "@/mongodb/tonghuashun/liangjia";
+import { saveLiangJiaData, saveTargetLiangjia } from "@/mongodb/tonghuashun/liangjia";
 
 /**
  * 获取量价齐跌
@@ -20,7 +20,7 @@ async function scheduleforLjqd() {
 async function scheduleforLjqs() {
   const rule = new schedule.RecurrenceRule();
   rule.second = 0;
-  rule.minute = 45;
+  rule.minute = 42;
   rule.hour = [12, 15];
   rule.dayOfWeek = [1, 2, 3, 4, 5];
   schedule.scheduleJob(rule, async () => {
@@ -28,8 +28,20 @@ async function scheduleforLjqs() {
     await saveLiangJiaData(result);
   });
 }
+// 每个交易日定时计算出同花顺的量价齐升，量价齐跌和韭菜公社热点异动的股票入库
+async function scheduleforSaveLiangjiaTarget() {
+  const rule = new schedule.RecurrenceRule();
+  rule.second = 0;
+  rule.minute = 45;
+  rule.hour = 15;
+  rule.dayOfWeek = [1, 2, 3, 4, 5];
+  schedule.scheduleJob(rule, async () => {
+    await saveTargetLiangjia();
+  });
+}
 
 export const initTongHuaShunSchedule = () => {
   scheduleforLjqd();
   scheduleforLjqs();
+  scheduleforSaveLiangjiaTarget();
 };
