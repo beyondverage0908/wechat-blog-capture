@@ -1,7 +1,13 @@
 import { DefaultState, Context } from "koa";
 import Router from "koa-router";
 import { startCapture, thsCaptch } from "@/works/tonghuashun/tool";
-import { saveLiangJiaData, queryLiangJia, saveTargetLiangjia } from "@/mongodb/tonghuashun/liangjia";
+import {
+  saveLiangJiaData,
+  queryLiangJia,
+  saveTargetLiangjia,
+  getLiangJiaTarget,
+  updateLiangJiaTargetMonit,
+} from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
 import dateTool from "@/lib/date";
 import { createLogger } from "@/logger";
@@ -67,9 +73,33 @@ router.get("/hotljqs", async (ctx) => {
     data: data,
   });
 });
-router.get("/ljtarget", async (ctx) => {
+// 触发分析量价关系，并入库结果表
+router.post("/ljtarget", async (ctx) => {
   const result = await saveTargetLiangjia();
   ctx.success(result);
+});
+// 获取量价关系
+router.get("/ljtarget", async (ctx) => {
+  const { monit }: { monit?: string } = ctx.request.query;
+  const result = await getLiangJiaTarget({ monit });
+  ctx.success({
+    total: result.length || 0,
+    data: result,
+  });
+});
+// 更新量价关系结果表的监控状态
+router.put("/ljtarget", async (ctx) => {
+  const { id, monit } = ctx.request.body;
+  if (!id || !monit) {
+    ctx.error("id,monit参数必传");
+    return;
+  }
+  const result = await updateLiangJiaTargetMonit(id, monit);
+  if (result.matchedCount) {
+    ctx.success("成功");
+  } else {
+    ctx.error("没有需要更新的数据");
+  }
 });
 
 export default router;

@@ -2,12 +2,19 @@
   <n-data-table :data="tableData" :columns="columns" />
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, h } from "vue";
+import { computed, onMounted, ref, h, PropType, watch } from "vue";
 import { useRoute } from "vue-router";
 import storage from "/@/libs/storage";
 import { LocalCategoryRange } from "/@/constant";
 import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
 import { DataTableColumn } from "naive-ui";
+
+const props = defineProps({
+  name: {
+    type: String as PropType<string>,
+    default: null,
+  },
+});
 
 const columns = computed((): DataTableColumn[] => [
   {
@@ -94,10 +101,8 @@ const columns = computed((): DataTableColumn[] => [
 ]);
 const tableData = ref<Stock[]>([]);
 
-onMounted(() => {
+const buildTableDataByName = (name: string) => {
   const data: Category[] = JSON.parse(storage.getStorage(LocalCategoryRange));
-  const route = useRoute();
-  const { name } = route.query;
   const findCategory = data.find((item) => item.category === name);
   if (!findCategory) {
     return;
@@ -115,5 +120,21 @@ onMounted(() => {
   tableData.value = [...map.values()]
     .sort((a, b) => b.length - a.length)
     .flat();
+};
+
+// 监听
+watch(
+  () => props.name,
+  (val: string) => {
+    console.log("=======", val);
+    buildTableDataByName(val);
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  const route = useRoute();
+  const { name } = route.query;
+  buildTableDataByName(name as string);
 });
 </script>

@@ -8,12 +8,13 @@ import storage from "/@/libs/storage";
 import { LocalCategoryRange } from "/@/constant";
 import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
 import Header from "/@/views/jiucaigongshe/action/components/header.vue";
+import ActionDetail from "/@/views/jiucaigongshe/action-detail/index.vue";
 
 type EChartsOption = echarts.EChartsOption;
 interface TreeNode {
   name: string;
   value: number;
-  link: string;
+  link?: string;
   data?: Stock[];
   children?: TreeNode[];
 }
@@ -22,6 +23,8 @@ type DateRange = { startDate: string; endDate: string };
 // Returns the router instance. Equivalent to using $router inside templates. Must be called inside of setup().
 const router = useRouter();
 const chartDom = ref<HTMLElement>();
+const showDrawer = ref<boolean>(false);
+const clickActionName = ref<string>();
 async function renderChart(recentDay?: number, range?: DateRange) {
   let option: EChartsOption;
   let myChart = echarts.init(chartDom.value!);
@@ -38,7 +41,7 @@ async function renderChart(recentDay?: number, range?: DateRange) {
     name: item.category,
     value: item.number,
     data: item.stocks,
-    link: `${window.location.origin}/action-detail?name=${item.category}`,
+    // link: `${window.location.origin}/action-detail?name=${item.category}`,
   }));
 
   const formatUtil = echarts.format;
@@ -98,9 +101,7 @@ async function renderChart(recentDay?: number, range?: DateRange) {
               formatUtil.encodeHTML(treePath.join("/")) +
               "</div>",
             "数量: " + formatUtil.addCommas(value),
-          ]
-            .concat(stockInfos)
-            .join("");
+          ].join("");
         },
       },
       series: [
@@ -126,6 +127,12 @@ async function renderChart(recentDay?: number, range?: DateRange) {
       ],
     })
   );
+  myChart.on("click", function (chartClickData) {
+    const clickData = chartClickData as { data: { name: string } };
+    const { data } = clickData;
+    showDrawer.value = true;
+    clickActionName.value = data.name;
+  });
 }
 // 获取时间变更
 const handleUpdateDate = (recentDay: number | DateRange) => {
@@ -158,5 +165,13 @@ const handleToDashboard = () => {
       style="width: 100%; height: 100%"
       ref="chartDom"
     ></div>
+    <n-drawer v-model:show="showDrawer" width="90%" placement="right">
+      <n-drawer-content closable>
+        <template #header>
+          <b>{{ clickActionName }}</b>
+        </template>
+        <ActionDetail :name="clickActionName" />
+      </n-drawer-content>
+    </n-drawer>
   </div>
 </template>

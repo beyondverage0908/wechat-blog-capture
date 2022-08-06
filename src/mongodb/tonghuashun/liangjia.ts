@@ -2,7 +2,7 @@
  * 量价关系
  */
 
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { createLogger } from "@/middleware/logger";
 import { t_ths_liangjia, t_ths_liangjia_target } from "../model";
 import { LiangJiaSchema, LiangJiaTargetSchema } from "../schema/tonghuashun";
@@ -127,6 +127,10 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
   return findStocks;
 }
 
+/**
+ * 分析量价齐升和量价齐跌和韭菜公社之间的关系，并把数据入库
+ * @returns
+ */
 export const saveTargetLiangjia = async () => {
   logger.info("开始量价分析【量价齐升】【量价齐跌】");
   const liangjiaDateRange = dateTool.recentRange(2);
@@ -185,4 +189,22 @@ export const saveTargetLiangjia = async () => {
   }
   logger.info("结束量价分析【量价齐升】【量价齐跌】，插入成功");
   return "插入成功";
+};
+
+type GetLiangJiaQueryType = {
+  monit?: string;
+};
+
+// 获取量价关系表
+export const getLiangJiaTarget = async ({ monit }: GetLiangJiaQueryType) => {
+  const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  const filter: GetLiangJiaQueryType = {};
+  monit ? (filter["monit"] = monit) : null;
+  const result = await TargetModel.find(filter).sort({ checkTime: "desc" });
+  return result;
+};
+// 更新监控状态
+export const updateLiangJiaTargetMonit = async (id: string, monit: string) => {
+  const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  return await TargetModel.updateOne({ _id: id }, { monit: monit, checkType: "2" });
 };

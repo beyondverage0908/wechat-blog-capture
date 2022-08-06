@@ -37,6 +37,19 @@ class Http {
       });
     });
   }
+  put(url: string, config?: AxiosRequestConfig<any> | undefined) {
+    return new Promise<HttpResponse>((resolve, reject) => {
+      const { data, params } = config as AxiosRequestConfig<any>;
+      axios.put(url, data, { params, baseURL: baseUrl }).then((result) => {
+        resolve(result.data);
+        if (
+          result.data.code !== HttpSuccessCode ||
+          result.data.success !== true
+        ) {
+        }
+      });
+    });
+  }
 }
 
 export default new Http();

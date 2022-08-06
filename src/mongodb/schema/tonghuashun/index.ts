@@ -18,7 +18,7 @@ export const LiangJiaSchema = new mongoose.Schema({
 export const LiangJiaTargetSchema = new mongoose.Schema({
   name: SchemaTypes.String, // 股票名称
   code: SchemaTypes.String, // 股票代码
-  monit: SchemaTypes.String, // 是否监控 1：监控 2：不监控 3: 暂定
+  monit: SchemaTypes.String, // 是否监控 1：监控中 2：已移除监控 3: 暂定
   checkTime: SchemaTypes.String, // 命中入选时间
   uncheckTime: SchemaTypes.String, // 移除监听时间
   checkPrice: SchemaTypes.Number, // 入选当日收盘价格
