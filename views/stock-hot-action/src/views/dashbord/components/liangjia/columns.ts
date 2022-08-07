@@ -54,7 +54,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
       } else if (row.monit === MonitType.removed) {
         return h("span", { style: { color: "red" } }, "移除监控");
       } else if (row.monit === "3") {
-        return h("span", MonitType.wait);
+        return h("span", "暂定");
       }
     },
   },
@@ -75,11 +75,11 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
     key: "uncheckPrice",
   },
   {
-    title: "监测7天后价格",
+    title: "7天后价格",
     key: "price7",
   },
   {
-    title: "检测14天价格",
+    title: "14天后价格",
     key: "price14",
   },
   {
@@ -105,7 +105,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
       if (row.ljtype === LiangJiaType.ljqd) {
         return h("span", "量价齐跌");
       } else if (row.ljtype === "ljqs") {
-        return h("span", LiangJiaType.ljqs);
+        return h("span", "量价齐升");
       }
       return h("span", "-");
     },
@@ -138,6 +138,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
                 MonitType.removed
               );
               if (success) {
+                row.monit = MonitType.removed;
                 window.$message.success("已经移除监控");
               }
             },
@@ -159,6 +160,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
                 MonitType.moniting
               );
               if (success) {
+                row.monit = MonitType.moniting;
                 window.$message.success("已经加入监控");
               }
             },
