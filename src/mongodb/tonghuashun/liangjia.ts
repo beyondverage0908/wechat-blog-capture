@@ -136,7 +136,20 @@ export const saveTargetLiangjia = async () => {
   const liangjiaDateRange = dateTool.recentRange(2);
   const jcgsDateRange = dateTool.recentRange(10);
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  const LiangJiaModel = mongoose.model(t_ths_liangjia, LiangJiaSchema);
   const currentDate = dateTool.format();
+  // -1表示降序，1表示升序
+  const limitModels = await LiangJiaModel.find().sort({ date: -1 }).limit(1);
+  if (!limitModels.length) {
+    logger.info("当前日期数据已存在，或者未爬取到THS的量价数据");
+    return "当前日期数据已存在，或者未爬取到THS的量价数据";
+  }
+  if (limitModels[0].date !== currentDate) {
+    logger.info(
+      `当前量价表最近一日数据时间:${limitModels[0].date}，触发时间为：${currentDate}，两者时间不相符，不能进行分析`
+    );
+    return `当前量价表最近一日数据时间:${limitModels[0].date}，触发时间为：${currentDate}，两者时间不相符，不能进行分析`;
+  }
   const ljqdcount = await TargetModel.find({ checkTime: currentDate, ljtype: THSCaptchTypeEnum.ljqd }).count();
   const ljqsCount = await TargetModel.find({ checkTime: currentDate, ljtype: THSCaptchTypeEnum.ljqs }).count();
   if (ljqdcount && ljqsCount) {
@@ -206,5 +219,5 @@ export const getLiangJiaTarget = async ({ monit }: GetLiangJiaQueryType) => {
 // 更新监控状态
 export const updateLiangJiaTargetMonit = async (id: string, monit: string) => {
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
-  return await TargetModel.updateOne({ _id: id }, { monit: monit, checkType: "2" });
+  return await TargetModel.updateOne({ _id: id }, { monit: monit, checkType: CheckType.manual });
 };
