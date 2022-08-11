@@ -7,6 +7,7 @@ import eastmoney from "./eastmoney";
 import jiucaigongshe from "./jiucaigongshe";
 import ticket from "./ticket";
 import tonghuashun from "./tonghuashun";
+import stock from "./stock";
 
 const router = new Router<DefaultState, Context>({ prefix: "/pac/api" });
 
@@ -15,13 +16,10 @@ router.use("/home", home.routes(), home.allowedMethods());
 router.use("/page", page.routes(), page.allowedMethods());
 router.use("/wechat", wechat.routes(), wechat.allowedMethods());
 router.use("/eastmoney", eastmoney.routes(), eastmoney.allowedMethods());
-router.use(
-  "/jiucaigongshe",
-  jiucaigongshe.routes(),
-  jiucaigongshe.allowedMethods()
-);
+router.use("/jiucaigongshe", jiucaigongshe.routes(), jiucaigongshe.allowedMethods());
 router.use("/ticket", ticket.routes(), ticket.allowedMethods());
 router.use("/ths", tonghuashun.routes(), tonghuashun.allowedMethods());
+router.use("/stock", stock.routes(), stock.allowedMethods());
 
 // 首页
 router.get("/", (ctx) => {
