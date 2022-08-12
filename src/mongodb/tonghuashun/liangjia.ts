@@ -10,6 +10,8 @@ import { LiangJiaStock, THSCaptchTypeEnum } from "@/types/tonghuashun";
 import { queryRangeHotStocks } from "@/mongodb/jiucaigongshe/liangjia";
 import { Stock } from "@/types/jiucaigongshe";
 import dateTool from "@/lib/date";
+import stockTool from "@/works/stock/tool";
+import { getGroupStockPrice } from "@/works/stock/price";
 const logger = createLogger("TongHuaShunDB");
 
 type ThsStock = Stock & {
@@ -220,4 +222,29 @@ export const getLiangJiaTarget = async ({ monit }: GetLiangJiaQueryType) => {
 export const updateLiangJiaTargetMonit = async (id: string, monit: string) => {
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
   return await TargetModel.updateOne({ _id: id }, { monit: monit, checkType: CheckType.manual });
+};
+
+/**
+ * 爬取量价关系表中当前正在监控中，且未爬取过股票的股票
+ * @param immediately 是否立即执行
+ * @returns
+ */
+export const updateLiangJiaTargetMonitPrice = async (immediately?: boolean) => {
+  if (!immediately) {
+    return;
+  }
+  const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  const rows = await TargetModel.find({ monit: MonitType.moniting, checkPrice: null }).sort({ checkTime: "desc" });
+  const securityCodes = rows.map((item) => item.code!!);
+  const formatSecurityCodes = stockTool.formatShSzStocks(securityCodes);
+  logger.info(`准备开始爬取：${formatSecurityCodes} 的股价`);
+  const priceValues = await getGroupStockPrice(formatSecurityCodes);
+  for await (const code of securityCodes) {
+    const index = securityCodes.indexOf(code);
+    // 防止爬取的股票没有股价
+    const priceValue = !!parseFloat(priceValues[index]) ? priceValues[index] : null;
+    console.log(code, parseFloat(priceValues[index]), !!parseFloat(priceValues[index]), priceValue);
+    await TargetModel.updateMany({ code: code, monit: MonitType.moniting }, { $set: { checkPrice: priceValue } });
+  }
+  return priceValues;
 };

@@ -1,6 +1,6 @@
 import schedule from "node-schedule";
 import { startCapture, thsCaptch } from "./tool";
-import { saveLiangJiaData, saveTargetLiangjia } from "@/mongodb/tonghuashun/liangjia";
+import { saveLiangJiaData, saveTargetLiangjia, updateLiangJiaTargetMonitPrice } from "@/mongodb/tonghuashun/liangjia";
 
 /**
  * 获取量价齐跌
@@ -39,9 +39,21 @@ async function scheduleforSaveLiangjiaTarget() {
     await saveTargetLiangjia();
   });
 }
+// 爬取监控中的股票价格
+async function scheduleforMonitPrice() {
+  const rule = new schedule.RecurrenceRule();
+  rule.second = 0;
+  rule.minute = 48;
+  rule.hour = 15;
+  rule.dayOfWeek = [1, 2, 3, 4, 5];
+  schedule.scheduleJob(rule, async () => {
+    await updateLiangJiaTargetMonitPrice(true);
+  });
+}
 
 export const initTongHuaShunSchedule = () => {
   scheduleforLjqd();
   scheduleforLjqs();
   scheduleforSaveLiangjiaTarget();
+  scheduleforMonitPrice();
 };

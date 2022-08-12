@@ -7,6 +7,7 @@ import {
   saveTargetLiangjia,
   getLiangJiaTarget,
   updateLiangJiaTargetMonit,
+  updateLiangJiaTargetMonitPrice,
 } from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
 import dateTool from "@/lib/date";
@@ -100,6 +101,11 @@ router.put("/ljtarget", async (ctx) => {
   } else {
     ctx.error("没有需要更新的数据");
   }
+});
+// 手动触发更新量价关系表中股票价格
+router.put("/prices", async (ctx) => {
+  const prices = await updateLiangJiaTargetMonitPrice(true);
+  ctx.success(prices);
 });
 
 export default router;

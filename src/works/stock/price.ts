@@ -30,10 +30,18 @@ export async function getCurrentPrice(code: string) {
 export async function getGroupStockPrice(codes: string[]) {
   // const codes = ["000001", "000002", "000003", "000004", "000005", "000006", "000007", "000008", "000009"];
   let stockValues: string[] = [];
+  if (!codes || !codes.length) {
+    return stockValues;
+  }
   // 利用puppeteer内置的模拟器
   const { browser, page } = await createPuppeteer();
   await page.emulate(devices["iPhone 6"]);
   for await (const code of codes) {
+    // 校验证券代码必须是6位的
+    if (code.length !== 6) {
+      stockValues.push("-");
+    }
+    // 东方财富行情页面
     const url = `https://wap.eastmoney.com/quote/stock/${Tool.formatStockCode(code)}.html`;
     await page.goto(url, { waitUntil: "domcontentloaded" });
     const element = await page.waitForSelector(SOTCK_VALUE_SELECTOR_ID);
