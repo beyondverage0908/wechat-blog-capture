@@ -45,7 +45,10 @@ const columns = computed((): DataTableColumn[] => [
             cursor: "pointer",
           },
           onClick: () => {
-            window.open(`http://quote.eastmoney.com/${code}.html`, "_blank");
+            window.open(
+              `http://quote.eastmoney.com/concept/${code}.html`,
+              "_blank"
+            );
           },
         },
         code
@@ -118,6 +121,7 @@ const buildTableDataByName = (name: string) => {
     }
   });
   tableData.value = [...map.values()]
+    .map((stocks) => stocks.sort((a, b) => (b.day!! > a.day!! ? 1 : -1)))
     .sort((a, b) => b.length - a.length)
     .flat();
 };
@@ -126,15 +130,14 @@ const buildTableDataByName = (name: string) => {
 watch(
   () => props.name,
   (val: string) => {
-    console.log("=======", val);
     buildTableDataByName(val);
   },
   { immediate: true }
 );
 
-onMounted(() => {
-  const route = useRoute();
-  const { name } = route.query;
-  buildTableDataByName(name as string);
-});
+// onMounted(() => {
+//   const route = useRoute();
+//   const { name } = route.query;
+//   buildTableDataByName(name as string);
+// });
 </script>
