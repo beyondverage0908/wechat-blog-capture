@@ -20,17 +20,18 @@
     :bordered="false"
     :size="'small'"
     :loading="isLoading"
-    :style="{ height: '100%' }"
+    :style="{ height: '92%' }"
     flex-height
   />
   <n-drawer v-model:show="isShowDrawer" width="90%">
     <n-drawer-content>
+      <template #header>监控表详情</template>
       <n-data-table
         :columns="pageData.columns"
-        :data="pageData.tableData"
+        :data="detailTableData"
         :bordered="false"
         :size="'small'"
-        :loading="isLoading"
+        :loading="isDetailTableLoading"
         :style="{ height: '100%' }"
         flex-height
       />
@@ -38,7 +39,7 @@
   </n-drawer>
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { queryLiangJiaTarget } from "/@/apis/tonghuashun";
 import { columns } from "./columns";
 import { ArrowExpand20Filled } from "@vicons/fluent";
@@ -49,6 +50,8 @@ const pageData = reactive({
   columns: columns,
   tableData: [],
 });
+const detailTableData = ref([]);
+const isDetailTableLoading = ref(false);
 
 async function startQueryLiangJiaTarget() {
   isLoading.value = true;
@@ -57,8 +60,19 @@ async function startQueryLiangJiaTarget() {
   if (success && data) {
     pageData.tableData = data.data;
   }
-  console.log(data);
 }
+watch(isShowDrawer, (nval) => {
+  console.log(nval);
+  if (nval) {
+    isDetailTableLoading.value = true;
+    setTimeout(() => {
+      detailTableData.value = pageData.tableData;
+      isDetailTableLoading.value = false;
+    }, 200);
+  } else {
+    detailTableData.value = [];
+  }
+});
 onMounted(() => {
   startQueryLiangJiaTarget();
 });
