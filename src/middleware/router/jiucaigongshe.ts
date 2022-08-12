@@ -3,6 +3,7 @@ import Router from "koa-router";
 import { getDailyAction } from "@/works/jiucaigongshe/hot";
 import { updateTargetDayAction } from "@/works/jiucaigongshe";
 import { queryActionOfRange, updateHot } from "@/mongodb/jiucaigongshe/action";
+import HotTag from "@/mongodb/jiucaigongshe/hot-tag";
 import date from "@/lib/date";
 
 const router = new Router<DefaultState, Context>();
@@ -59,6 +60,17 @@ router.get("/action", async (ctx) => {
   // 倒序排列指定时间范围内的数据
   const sortArray = Array.from(map.values()).sort((a, b) => b.number - a.number);
   ctx.success(sortArray);
+});
+router.get("/hots/tag", async (ctx) => {
+  const { recentDay } = ctx.request.query;
+  if (!recentDay) {
+    ctx.error("recentDay参数传");
+    return;
+  }
+  const tradeDays = date.recentRange(Number(recentDay));
+  const hotTag = new HotTag();
+  const hots = await hotTag.getHotTag(tradeDays);
+  ctx.success(hots);
 });
 
 export default router;

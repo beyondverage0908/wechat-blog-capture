@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-import {
-  CategorySchema,
-  StockSchema,
-} from "@/mongodb/schema/jiucaigongshe/hot";
+import { CategorySchema, StockSchema } from "@/mongodb/schema/jiucaigongshe/hot";
 import { Category, Stock } from "@/types/jiucaigongshe";
 import { t_jcgs_category, t_jcgs_stock } from "../model";
 import { createLogger } from "@/middleware/logger";
