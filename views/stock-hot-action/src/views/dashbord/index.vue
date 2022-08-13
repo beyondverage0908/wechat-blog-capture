@@ -5,7 +5,11 @@
     >
       <Ticket />
     </div>
-    <div class="bg-orange-500 h-[calc(50vh)] rounded-sm"></div>
+    <div
+      class="border-1px border-solid border-gray-300 h-[calc(50vh)] rounded-sm"
+    >
+      <HotTags />
+    </div>
     <div
       class="border-1px border-solid border-gray-300 h-[calc(50vh)] col-span-2 rounded-sm"
     >
@@ -18,4 +22,5 @@
 <script setup lang="ts">
 import Ticket from "/@/views/dashbord/components/ticket/index.vue";
 import Liangjia from "/@/views/dashbord/components/liangjia/index.vue";
+import HotTags from "/@/views/dashbord/components/hot-tag/index.vue";
 </script>

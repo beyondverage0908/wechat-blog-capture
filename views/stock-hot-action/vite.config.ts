@@ -34,8 +34,9 @@ export default defineConfig({
     host: true,
     proxy: {
       "/pac/api": {
-        target: "http://111.229.62.79:3000",
+        // target: "http://111.229.62.79:3000",
         // target: "http://172.31.227.163:3000",
+        target: "http://192.168.101.7:3000",
         changeOrigin: true,
         ws: false,
       },

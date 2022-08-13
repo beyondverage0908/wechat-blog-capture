@@ -61,6 +61,9 @@ router.get("/action", async (ctx) => {
   const sortArray = Array.from(map.values()).sort((a, b) => b.number - a.number);
   ctx.success(sortArray);
 });
+/**
+ * 获取指定天数的热门标签
+ */
 router.get("/hots/tag", async (ctx) => {
   const { recentDay } = ctx.request.query;
   if (!recentDay) {
@@ -70,6 +73,32 @@ router.get("/hots/tag", async (ctx) => {
   const tradeDays = date.recentRange(Number(recentDay));
   const hotTag = new HotTag();
   const hots = await hotTag.getHotTag(tradeDays);
+  ctx.success(hots);
+});
+/**
+ * 保存，并推送热门标签
+ */
+router.post("/hots/tag", async (ctx) => {
+  const { tags } = ctx.request.body;
+  if (!tags) {
+    ctx.error("标签不能为空");
+    return;
+  }
+  console.log(tags);
+  const hotTag = new HotTag();
+  const result = await hotTag.saveHotTag(tags);
+  if (result && result.length) {
+    ctx.success("保存成功");
+  } else {
+    ctx.error("保存失败");
+  }
+});
+/**
+ * 获取选中的热门标签
+ */
+router.get("/hots/tag/checked", async (ctx) => {
+  const hotTag = new HotTag();
+  const hots = await hotTag.getCheckedHotTags();
   ctx.success(hots);
 });
 

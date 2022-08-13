@@ -8,3 +8,5 @@ export const t_em_hq = "t_em_hq";
 export const t_ths_liangjia = "t_ths_liangjia";
 // 同花顺量价分析的股票表
 export const t_ths_liangjia_target = "t_ths_liangjia_target";
+// 韭菜公社的热门分类（标签）
+export const t_jcgs_hot_tag = "t_jcgs_hot_tag";

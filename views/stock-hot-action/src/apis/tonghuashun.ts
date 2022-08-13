@@ -37,3 +37,27 @@ export const updateLiangJiaMonit = (id: string, monit: "1" | "2" | "3") => {
 export const triggerLiangJia = () => {
   return http.post("/ths/ljtarget");
 };
+/**
+ * 获取热门标签
+ * @param recentDay
+ * @returns
+ */
+export const getJcgsHotTags = (recentDay: number = 10) => {
+  return http.get("/jiucaigongshe/hots/tag", { params: { recentDay } });
+};
+/**
+ * 保存热门标签
+ * @param hotTags
+ * @returns
+ */
+export const saveJcgsHotTags = (hotTags: string[]) => {
+  return http.post("/jiucaigongshe/hots/tag", { data: { tags: hotTags } });
+};
+/**
+ * 获取选中的热门标签
+ * @param recentDay
+ * @returns
+ */
+export const getJcgsCheckedHotTags = () => {
+  return http.get("/jiucaigongshe/hots/tag/checked");
+};

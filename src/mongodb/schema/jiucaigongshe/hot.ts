@@ -17,3 +17,10 @@ export const CategorySchema = new mongoose.Schema({
   number: Number, // 当日该分类下涨停数量
   day: SchemaTypes.String, // 日期
 });
+/**
+ * 热门标签
+ */
+export const HotTagSchema = new mongoose.Schema({
+  name: SchemaTypes.String, // 入选的热门标签
+  inputDate: SchemaTypes.String, // 入选的时间
+});
