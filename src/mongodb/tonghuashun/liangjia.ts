@@ -4,8 +4,9 @@
 
 import mongoose, { FilterQuery } from "mongoose";
 import { createLogger } from "@/middleware/logger";
-import { t_ths_liangjia, t_ths_liangjia_target } from "../model";
+import { t_ths_liangjia, t_ths_liangjia_target, t_jcgs_hot_tag } from "../model";
 import { LiangJiaSchema, LiangJiaTargetSchema } from "../schema/tonghuashun";
+import { HotTagSchema } from "../schema/jiucaigongshe/hot";
 import { LiangJiaStock, THSCaptchTypeEnum } from "@/types/tonghuashun";
 import { queryRangeHotStocks } from "@/mongodb/jiucaigongshe/liangjia";
 import { Stock } from "@/types/jiucaigongshe";
@@ -135,7 +136,7 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
  */
 export const saveTargetLiangjia = async () => {
   logger.info("开始量价分析【量价齐升】【量价齐跌】");
-  const liangjiaDateRange = dateTool.recentRange(2);
+  const liangjiaDateRange = dateTool.recentRange(5);
   const jcgsDateRange = dateTool.recentRange(10);
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
   const LiangJiaModel = mongoose.model(t_ths_liangjia, LiangJiaSchema);
@@ -158,6 +159,12 @@ export const saveTargetLiangjia = async () => {
     logger.info("已经存在当日数据，不需要继续插入");
     return "已经存在当日数据，不需要继续插入";
   }
+
+  // 获取热门标签
+  const HotTagModel = mongoose.model(t_jcgs_hot_tag, HotTagSchema);
+  const tags = await HotTagModel.find({});
+  const hotTags = tags.map((item) => item.name);
+
   if (!ljqdcount) {
     const seriesDay = 3; // 连续天数
     const stocks = await queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqd);
@@ -165,7 +172,8 @@ export const saveTargetLiangjia = async () => {
       stocks.map((item) => ({
         name: item.name,
         code: item.code,
-        monit: MonitType.waiting,
+        // 当前股票分类是属于热门标签的，则自动进入监控状态
+        monit: hotTags.includes(item.category) ? MonitType.moniting : MonitType.waiting,
         checkTime: currentDate,
         uncheckTime: null,
         checkPrice: null,
@@ -187,7 +195,8 @@ export const saveTargetLiangjia = async () => {
       stocks.map((item) => ({
         name: item.name,
         code: item.code,
-        monit: MonitType.waiting,
+        // 当前股票分类是属于热门标签的，则自动进入监控状态
+        monit: hotTags.includes(item.category) ? MonitType.moniting : MonitType.waiting,
         checkTime: currentDate,
         uncheckTime: null,
         checkPrice: null,
@@ -208,14 +217,16 @@ export const saveTargetLiangjia = async () => {
 
 type GetLiangJiaQueryType = {
   monit?: string;
+  ljtype?: string;
 };
 
 // 获取量价关系表
-export const getLiangJiaTarget = async ({ monit }: GetLiangJiaQueryType) => {
+export const getLiangJiaTarget = async ({ monit, ljtype }: GetLiangJiaQueryType) => {
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
   const filter: GetLiangJiaQueryType = {};
   monit ? (filter["monit"] = monit) : null;
-  const result = await TargetModel.find(filter).sort({ checkTime: "desc" });
+  ljtype ? (filter["ljtype"] = ljtype) : null;
+  const result = await TargetModel.find(filter).sort({ checkTime: -1 }).limit(200);
   return result;
 };
 // 更新监控状态

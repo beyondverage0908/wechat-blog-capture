@@ -1,18 +1,33 @@
 <template>
-  <header class="h-9 flex items-center justify-between">
+  <header
+    class="h-9 flex items-center justify-between border-b border-solid border-gray-300"
+  >
     <div class="ml-2">
       <b>监控表</b>
     </div>
-    <div class="cursor-pointer">
+    <n-space>
+      <n-button
+        type="primary"
+        class="align-middle"
+        size="tiny"
+        @click="handleRefresh"
+      >
+        <template #icon>
+          <n-icon>
+            <ArrowClockwise12Regular />
+          </n-icon>
+        </template>
+        刷新
+      </n-button>
       <n-icon
-        class="mr-2"
+        class="mr-2 cursor-pointer align-middle"
         :size="22"
         color="rgb(249, 115, 22)"
         @click="isShowDrawer = true"
       >
         <ArrowExpand20Filled />
       </n-icon>
-    </div>
+    </n-space>
   </header>
   <n-data-table
     :columns="pageData.columns"
@@ -20,7 +35,7 @@
     :bordered="false"
     :size="'small'"
     :loading="isLoading"
-    :style="{ height: '92%' }"
+    :style="{ height: '90%' }"
     flex-height
   />
   <n-drawer v-model:show="isShowDrawer" width="90%">
@@ -42,7 +57,7 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import { queryLiangJiaTarget } from "/@/apis/tonghuashun";
 import { columns } from "./columns";
-import { ArrowExpand20Filled } from "@vicons/fluent";
+import { ArrowExpand20Filled, ArrowClockwise12Regular } from "@vicons/fluent";
 
 const isLoading = ref<boolean>(false);
 const isShowDrawer = ref<boolean>(false);
@@ -61,6 +76,9 @@ async function startQueryLiangJiaTarget() {
     pageData.tableData = data.data;
   }
 }
+const handleRefresh = async () => {
+  startQueryLiangJiaTarget();
+};
 watch(isShowDrawer, (nval) => {
   console.log(nval);
   if (nval) {

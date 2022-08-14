@@ -2,6 +2,7 @@ import http from "./http";
 
 type LiangJiaTargetQuery = {
   monit?: string;
+  ljtype?: string;
 };
 
 /**

@@ -1,9 +1,19 @@
 <template>
   <div>
     <header
-      class="flex items-center justify-between pl-5 pr-5 h-9 border-b border-gray-300 border-solid"
+      class="flex items-center justify-between pl-3 pr-3 h-9 border-b border-gray-300 border-solid"
     >
       <b>热门标签</b>
+      <div>
+        <n-button size="tiny" type="primary" @click="handleSaveHotTags">
+          <template #icon>
+            <n-icon>
+              <Save16Regular />
+            </n-icon>
+          </template>
+          保存
+        </n-button>
+      </div>
     </header>
     <div class="p-2">
       <n-checkbox-group v-model:value="checkTags">
@@ -19,12 +29,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import {
   getJcgsHotTags,
   saveJcgsHotTags,
   getJcgsCheckedHotTags,
 } from "/@/apis/tonghuashun";
+import { Save16Regular } from "@vicons/fluent";
 
 type HotType = {
   _id: string;
@@ -32,11 +43,14 @@ type HotType = {
 };
 
 const hots = ref<HotType[]>([]);
-const checkTags = ref();
+const checkTags = ref<string[]>([]);
 
-watch(checkTags, (v: string[]) => {
-  saveJcgsHotTags(v);
-});
+const handleSaveHotTags = async () => {
+  const data = await saveJcgsHotTags(checkTags.value);
+  if (data && data.success) {
+    window.$message.success("保存成功");
+  }
+};
 
 onMounted(async () => {
   const checkedData = await getJcgsCheckedHotTags();

@@ -15,12 +15,19 @@
     >
       <Liangjia />
     </div>
-    <div class="bg-blue-300 h-[calc(50vh)]"></div>
-    <div class="bg-blue-300 h-[calc(50vh)]"></div>
+    <div
+      class="h-[calc(50vh)] border-1px border-solid border-gray-300 rounded-sm col-span-2"
+    >
+      <LiangJiaMonited />
+    </div>
+    <div
+      class="h-[calc(50vh)] border-1px border-solid border-gray-300 rounded-sm"
+    ></div>
   </div>
 </template>
 <script setup lang="ts">
 import Ticket from "/@/views/dashbord/components/ticket/index.vue";
 import Liangjia from "/@/views/dashbord/components/liangjia/index.vue";
 import HotTags from "/@/views/dashbord/components/hot-tag/index.vue";
+import LiangJiaMonited from "/@/views/dashbord/components/liangjia/monited.vue";
 </script>
