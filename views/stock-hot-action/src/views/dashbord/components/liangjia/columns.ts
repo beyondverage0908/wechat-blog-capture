@@ -235,6 +235,10 @@ export function getSimpleColumns(
       key: "checkTime",
     },
     {
+      title: "入选价格",
+      key: "checkPrice",
+    },
+    {
       title: "7天后价格",
       key: "price7",
     },
