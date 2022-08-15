@@ -6,6 +6,19 @@
       <b>监控表</b>
     </div>
     <n-space>
+      <n-radio-group
+        name="liangjiaRadioName"
+        :default-value="liangJiaType"
+        :on-update:value="handleUpdateLiangJia"
+      >
+        <n-radio
+          v-for="item in pageData.liangjiaLabelList"
+          :key="item.value"
+          :value="item.value"
+        >
+          {{ item.label }}
+        </n-radio>
+      </n-radio-group>
       <n-button
         type="primary"
         class="align-middle"
@@ -58,26 +71,38 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { queryLiangJiaTarget } from "/@/apis/tonghuashun";
 import { columns } from "./columns";
 import { ArrowExpand20Filled, ArrowClockwise12Regular } from "@vicons/fluent";
+import { LiangJiaType } from "./types";
 
 const isLoading = ref<boolean>(false);
 const isShowDrawer = ref<boolean>(false);
 const pageData = reactive({
   columns: columns,
   tableData: [],
+  liangjiaLabelList: [
+    { label: "量价齐跌", value: LiangJiaType.ljqd },
+    { label: "量价齐升", value: LiangJiaType.ljqs },
+  ],
 });
+const liangJiaType = ref<LiangJiaType>(LiangJiaType.ljqd);
 const detailTableData = ref([]);
 const isDetailTableLoading = ref(false);
 
-async function startQueryLiangJiaTarget() {
+async function startQueryLiangJiaTarget(liangjiaType: LiangJiaType) {
   isLoading.value = true;
-  const { data, success } = await queryLiangJiaTarget({});
+  const { data, success } = await queryLiangJiaTarget({
+    ljtype: liangjiaType,
+  });
   isLoading.value = false;
   if (success && data) {
     pageData.tableData = data.data;
   }
 }
 const handleRefresh = async () => {
-  startQueryLiangJiaTarget();
+  startQueryLiangJiaTarget(liangJiaType.value);
+};
+const handleUpdateLiangJia = (value: LiangJiaType) => {
+  liangJiaType.value = value;
+  startQueryLiangJiaTarget(liangJiaType.value);
 };
 watch(isShowDrawer, (nval) => {
   console.log(nval);
@@ -92,6 +117,6 @@ watch(isShowDrawer, (nval) => {
   }
 });
 onMounted(() => {
-  startQueryLiangJiaTarget();
+  startQueryLiangJiaTarget(liangJiaType.value);
 });
 </script>

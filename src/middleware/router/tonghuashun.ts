@@ -8,6 +8,7 @@ import {
   getLiangJiaTarget,
   updateLiangJiaTargetMonit,
   updateLiangJiaTargetMonitPrice,
+  updateLiangJiaTargetAfterDaysPrice,
 } from "@/mongodb/tonghuashun/liangjia";
 import { THSCaptchTypeEnum } from "@/types/tonghuashun";
 import dateTool from "@/lib/date";
@@ -106,6 +107,13 @@ router.put("/ljtarget", async (ctx) => {
 router.put("/prices", async (ctx) => {
   const prices = await updateLiangJiaTargetMonitPrice(true);
   ctx.success(prices);
+});
+
+router.put("/ljtarget/after", async (ctx) => {
+  const { day } = ctx.request.query;
+  const afterDay: number = Number(day) || 7;
+  const result = await updateLiangJiaTargetAfterDaysPrice(afterDay);
+  ctx.success(result);
 });
 
 export default router;

@@ -5,6 +5,19 @@
     >
       <div><b>监控中</b></div>
       <n-space>
+        <n-radio-group
+          name="liangjiaRadioName"
+          :default-value="liangJiaType"
+          :on-update:value="handleUpdateLiangJia"
+        >
+          <n-radio
+            v-for="item in pageData.liangjiaLabelList"
+            :key="item.value"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </n-radio>
+        </n-radio-group>
         <n-button
           type="primary"
           class="align-middle"
@@ -38,26 +51,36 @@ import { ArrowClockwise12Regular } from "@vicons/fluent";
 import { reactive, ref, onMounted } from "vue";
 import { getSimpleColumns } from "./columns";
 import { queryLiangJiaTarget } from "/@/apis/tonghuashun";
-import { MonitType } from "./types";
+import { MonitType, LiangJiaType } from "./types";
 
 const handleAction = () => {
-  startQueryLiangJiaTarget();
+  startQueryLiangJiaTarget(liangJiaType.value);
 };
 
 const isLoading = ref<boolean>(false);
 const pageData = reactive({
   columns: getSimpleColumns(handleAction),
   tableData: [],
+  liangjiaLabelList: [
+    { label: "量价齐跌", value: LiangJiaType.ljqd },
+    { label: "量价齐升", value: LiangJiaType.ljqs },
+  ],
 });
+const liangJiaType = ref<LiangJiaType>(LiangJiaType.ljqd);
 
 const handleRefresh = () => {
-  startQueryLiangJiaTarget();
+  startQueryLiangJiaTarget(liangJiaType.value);
+};
+const handleUpdateLiangJia = (value: LiangJiaType) => {
+  liangJiaType.value = value;
+  startQueryLiangJiaTarget(liangJiaType.value);
 };
 
-async function startQueryLiangJiaTarget() {
+async function startQueryLiangJiaTarget(liangJiaType: LiangJiaType) {
   isLoading.value = true;
   const { data, success } = await queryLiangJiaTarget({
     monit: MonitType.moniting,
+    ljtype: liangJiaType,
   });
   isLoading.value = false;
   if (success && data) {
@@ -67,6 +90,6 @@ async function startQueryLiangJiaTarget() {
 }
 
 onMounted(() => {
-  startQueryLiangJiaTarget();
+  startQueryLiangJiaTarget(liangJiaType.value);
 });
 </script>

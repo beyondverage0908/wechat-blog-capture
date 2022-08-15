@@ -2,7 +2,7 @@
  * 量价关系
  */
 
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose from "mongoose";
 import { createLogger } from "@/middleware/logger";
 import { t_ths_liangjia, t_ths_liangjia_target, t_jcgs_hot_tag } from "../model";
 import { LiangJiaSchema, LiangJiaTargetSchema } from "../schema/tonghuashun";
@@ -12,7 +12,8 @@ import { queryRangeHotStocks } from "@/mongodb/jiucaigongshe/liangjia";
 import { Stock } from "@/types/jiucaigongshe";
 import dateTool from "@/lib/date";
 import stockTool from "@/works/stock/tool";
-import { getGroupStockPrice } from "@/works/stock/price";
+import { getGroupStockPrice, getCurrentPrice } from "@/works/stock/price";
+import dayjs from "dayjs";
 const logger = createLogger("TongHuaShunDB");
 
 type ThsStock = Stock & {
@@ -258,4 +259,35 @@ export const updateLiangJiaTargetMonitPrice = async (immediately?: boolean) => {
     await TargetModel.updateMany({ code: code, monit: MonitType.moniting }, { $set: { checkPrice: priceValue } });
   }
   return priceValues;
+};
+
+/**
+ * 爬取7日或者是14日后的股票数据
+ */
+export const updateLiangJiaTargetAfterDaysPrice = async (afterDay: number = 7) => {
+  // 找出量价关系表中当前正在监控中，且当前日期距离入选日期间隔是指定的afterDay的证券
+  const LiangJiaTargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+  const filter: Record<string, any> = {};
+  if (afterDay === 7) {
+    filter["price7"] = null;
+  } else if (afterDay === 14) {
+    filter["price14"] = null;
+  }
+  const monitingRows = await LiangJiaTargetModel.find({ ...filter, monit: MonitType.moniting }).sort({ checkTime: -1 });
+  for await (const row of monitingRows) {
+    if (dateTool.format(dayjs().subtract(afterDay, "day")) === row.checkTime) {
+      console.log(stockTool.formatShSzStock(row.code!));
+      const securityPrice = await getCurrentPrice(stockTool.formatShSzStock(row.code!));
+      console.log(securityPrice);
+      await LiangJiaTargetModel.updateMany(
+        {
+          code: row.code,
+          monit: MonitType.moniting,
+          ...filter,
+        },
+        { $set: { [`price${afterDay}`]: securityPrice } }
+      );
+    }
+  }
+  return "爬取成功";
 };

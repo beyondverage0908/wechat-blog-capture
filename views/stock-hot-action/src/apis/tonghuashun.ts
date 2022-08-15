@@ -9,10 +9,11 @@ type LiangJiaTargetQuery = {
  * 获取热门赛道量价关系(已经入库的数据)
  * @returns
  */
-export const queryLiangJiaTarget = ({ monit }: LiangJiaTargetQuery) => {
+export const queryLiangJiaTarget = ({ monit, ljtype }: LiangJiaTargetQuery) => {
   return http.get("/ths/ljtarget", {
     params: {
       monit,
+      ljtype,
     },
   });
 };
