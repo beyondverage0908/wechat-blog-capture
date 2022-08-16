@@ -1,6 +1,11 @@
 import schedule from "node-schedule";
 import { startCapture, thsCaptch } from "./tool";
-import { saveLiangJiaData, saveTargetLiangjia, updateLiangJiaTargetMonitPrice } from "@/mongodb/tonghuashun/liangjia";
+import {
+  saveLiangJiaData,
+  saveTargetLiangjia,
+  updateLiangJiaTargetMonitPrice,
+  updateLiangJiaTargetAfterDaysPrice,
+} from "@/mongodb/tonghuashun/liangjia";
 
 /**
  * 获取量价齐跌
@@ -48,6 +53,8 @@ async function scheduleforMonitPrice() {
   rule.dayOfWeek = [1, 2, 3, 4, 5];
   schedule.scheduleJob(rule, async () => {
     await updateLiangJiaTargetMonitPrice(true);
+    await updateLiangJiaTargetAfterDaysPrice(7);
+    await updateLiangJiaTargetAfterDaysPrice(14);
   });
 }
 

@@ -265,29 +265,46 @@ export const updateLiangJiaTargetMonitPrice = async (immediately?: boolean) => {
  * 爬取7日或者是14日后的股票数据
  */
 export const updateLiangJiaTargetAfterDaysPrice = async (afterDay: number = 7) => {
-  // 找出量价关系表中当前正在监控中，且当前日期距离入选日期间隔是指定的afterDay的证券
-  const LiangJiaTargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
-  const filter: Record<string, any> = {};
-  if (afterDay === 7) {
-    filter["price7"] = null;
-  } else if (afterDay === 14) {
-    filter["price14"] = null;
+  if (afterDay !== 7 && afterDay !== 14) {
+    return "只能分析7日后或者是14日后的数据";
   }
-  const monitingRows = await LiangJiaTargetModel.find({ ...filter, monit: MonitType.moniting }).sort({ checkTime: -1 });
-  for await (const row of monitingRows) {
-    if (dateTool.format(dayjs().subtract(afterDay, "day")) === row.checkTime) {
-      console.log(stockTool.formatShSzStock(row.code!));
-      const securityPrice = await getCurrentPrice(stockTool.formatShSzStock(row.code!));
-      console.log(securityPrice);
-      await LiangJiaTargetModel.updateMany(
-        {
-          code: row.code,
-          monit: MonitType.moniting,
-          ...filter,
-        },
-        { $set: { [`price${afterDay}`]: securityPrice } }
-      );
+  try {
+    logger.info(`开始爬取${afterDay}天的数据`);
+    // 找出量价关系表中当前正在监控中，且当前日期距离入选日期间隔是指定的afterDay的证券
+    const LiangJiaTargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
+    const filter: Record<string, any> = {};
+    if (afterDay === 7) {
+      filter["price7"] = null;
+    } else if (afterDay === 14) {
+      filter["price14"] = null;
     }
+    const monitingRows = await LiangJiaTargetModel.find({ ...filter, monit: MonitType.moniting }).sort({
+      checkTime: -1,
+    });
+    for await (const row of monitingRows) {
+      if (dateTool.format(dayjs().subtract(afterDay, "day")) === row.checkTime) {
+        const securityPrice = await getCurrentPrice(stockTool.formatShSzStock(row.code!));
+        let percent = null;
+        if (afterDay === 7 && securityPrice && securityPrice !== "-" && row.checkPrice) {
+          percent = Number((Number(securityPrice) - row.checkPrice) / row.checkPrice).toFixed(3);
+        }
+        if (afterDay === 14 && securityPrice && securityPrice !== "-" && row.checkPrice) {
+          percent = (Number(securityPrice) - row.checkPrice) / row.checkPrice;
+        }
+        const result = await LiangJiaTargetModel.updateMany(
+          {
+            code: row.code,
+            monit: MonitType.moniting,
+            ...filter,
+          },
+          { $set: { [`price${afterDay}`]: securityPrice, [`price${afterDay}Percent`]: percent } }
+        );
+        console.log("---", result);
+      }
+    }
+    logger.info(`爬取${afterDay}天的数据-爬取成功`);
+    return "爬取成功";
+  } catch (error) {
+    throw error;
   }
-  return "爬取成功";
 };

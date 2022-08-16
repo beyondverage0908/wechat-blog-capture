@@ -24,7 +24,9 @@ export const LiangJiaTargetSchema = new mongoose.Schema({
   checkPrice: SchemaTypes.Number, // 入选当日收盘价格
   uncheckPrice: SchemaTypes.Number, // 移除监听时候的价格
   price7: SchemaTypes.Number, // 监听第七日收盘价格
+  price7Percent: SchemaTypes.Number, // 监听第七日收盘价格的涨幅
   price14: SchemaTypes.Number, // 监听第14日收盘价格
+  price14Percent: SchemaTypes.Number, // 监听第14日收盘价格涨幅
   checkType: SchemaTypes.String, // 入选方式 1：自动 2：手动入选
   ljtype: SchemaTypes.String, // 量价关系
   seriesDay: SchemaTypes.Number, // 量价关系持续天数
