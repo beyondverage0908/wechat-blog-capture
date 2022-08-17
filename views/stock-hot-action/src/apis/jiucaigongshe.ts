@@ -24,3 +24,11 @@ export const getActionRange = (recentDay?: number, range?: DateRange) => {
 export const pickupTodayAction = () => {
   return http.get("/jiucaigongshe/today");
 };
+/**
+ * 获取股票的详情
+ * @param code
+ * @returns
+ */
+export const getStockDetail = (code: string) => {
+  return http.get("/jiucaigongshe/stock/detail", { params: { code } });
+};

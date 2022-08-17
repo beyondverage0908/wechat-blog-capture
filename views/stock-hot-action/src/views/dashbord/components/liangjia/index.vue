@@ -43,6 +43,8 @@
     </n-space>
   </header>
   <n-data-table
+    :row-props="handleRowProps"
+    :row-class-name="handleRowClassName"
     :columns="pageData.columns"
     :data="pageData.tableData"
     :bordered="false"
@@ -86,6 +88,22 @@ const pageData = reactive({
 const liangJiaType = ref<LiangJiaType>(LiangJiaType.ljqd);
 const detailTableData = ref([]);
 const isDetailTableLoading = ref(false);
+
+const currentClickRowIndex = ref<number>();
+const handleRowProps = (rowData: object, rowIndex: number) => {
+  return {
+    style: "cursor: pointer;",
+    onClick: () => {
+      currentClickRowIndex.value = rowIndex;
+    },
+  };
+};
+const handleRowClassName = (row: any, index: number) => {
+  if (currentClickRowIndex.value === index) {
+    return "row-highlight";
+  }
+  return "";
+};
 
 async function startQueryLiangJiaTarget(liangjiaType: LiangJiaType) {
   isLoading.value = true;

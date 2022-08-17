@@ -5,6 +5,7 @@ import { updateTargetDayAction } from "@/works/jiucaigongshe";
 import { queryActionOfRange, updateHot } from "@/mongodb/jiucaigongshe/action";
 import HotTag from "@/mongodb/jiucaigongshe/hot-tag";
 import date from "@/lib/date";
+import JcgsStock from "@/mongodb/jiucaigongshe/detail";
 
 const router = new Router<DefaultState, Context>();
 
@@ -100,6 +101,16 @@ router.get("/hots/tag/checked", async (ctx) => {
   const hotTag = new HotTag();
   const hots = await hotTag.getCheckedHotTags();
   ctx.success(hots);
+});
+
+router.get("/stock/detail", async (ctx) => {
+  const { code } = ctx.request.query;
+  if (!code) {
+    ctx.error("没有证券代码");
+    return;
+  }
+  const stock = new JcgsStock();
+  ctx.success(await stock.getDetail(code as string));
 });
 
 export default router;

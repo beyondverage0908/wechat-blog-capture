@@ -2,6 +2,12 @@ import { CheckType, ColumnRowData, LiangJiaType, MonitType } from "./types";
 import { DataTableColumn, NButton } from "naive-ui";
 import { h } from "vue";
 import { updateLiangJiaMonit } from "/@/apis/tonghuashun";
+import { openLinkCodeByWindow } from "/@/libs/util";
+
+export enum ActionTrigger {
+  refresh,
+  detailStock,
+}
 
 export const columns: DataTableColumn<ColumnRowData>[] = [
   {
@@ -30,15 +36,20 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
             cursor: "pointer",
           },
           onClick: () => {
-            window.open(
-              `http://quote.eastmoney.com/concept/${code}.html`,
-              "_blank"
-            );
+            openLinkCodeByWindow(code);
           },
         },
         code
       );
     },
+  },
+  {
+    title: "jcgs类别",
+    key: "category",
+  },
+  {
+    title: "ths类别",
+    key: "industry",
   },
   {
     // 是否监控 1：监控中 2：已移除监控 3: 暂定
@@ -113,14 +124,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
   {
     title: "连续天数",
     key: "seriesDay",
-  },
-  {
-    title: "jcgs类别",
-    key: "category",
-  },
-  {
-    title: "ths类别",
-    key: "industry",
+    width: 80,
   },
   {
     title: "操作",
@@ -173,7 +177,7 @@ export const columns: DataTableColumn<ColumnRowData>[] = [
 ];
 
 export function getSimpleColumns(
-  actionTrigger?: () => void
+  actionTrigger?: (type: ActionTrigger, extendParams?: any) => void
 ): DataTableColumn<ColumnRowData>[] {
   return [
     {
@@ -187,6 +191,23 @@ export function getSimpleColumns(
     {
       title: "证券名称",
       key: "name",
+      render: (row) => {
+        const name = row.name as string;
+        if (!name) return h("span", "");
+        return h(
+          "a",
+          {
+            style: {
+              textDecoration: "underline",
+              cursor: "pointer",
+            },
+            onClick: () => {
+              actionTrigger?.apply(null, [ActionTrigger.detailStock, row.code]);
+            },
+          },
+          name
+        );
+      },
     },
     {
       title: "证券代码",
@@ -202,15 +223,20 @@ export function getSimpleColumns(
               cursor: "pointer",
             },
             onClick: () => {
-              window.open(
-                `http://quote.eastmoney.com/concept/${code}.html`,
-                "_blank"
-              );
+              openLinkCodeByWindow(code);
             },
           },
           code
         );
       },
+    },
+    {
+      title: "jcgs类别",
+      key: "category",
+    },
+    {
+      title: "ths类别",
+      key: "industry",
     },
     {
       // 是否监控 1：监控中 2：已移除监控 3: 暂定
@@ -279,14 +305,6 @@ export function getSimpleColumns(
       key: "seriesDay",
     },
     {
-      title: "jcgs类别",
-      key: "category",
-    },
-    {
-      title: "ths类别",
-      key: "industry",
-    },
-    {
       title: "操作",
       key: "actions",
       render: (row) => {
@@ -304,7 +322,7 @@ export function getSimpleColumns(
                 if (success) {
                   row.monit = MonitType.removed;
                   window.$message.success("已经移除监控");
-                  actionTrigger?.apply(null);
+                  actionTrigger?.apply(null, [ActionTrigger.refresh]);
                 }
               },
             },

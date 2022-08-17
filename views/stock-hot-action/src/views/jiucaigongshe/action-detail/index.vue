@@ -3,11 +3,11 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref, h, PropType, watch } from "vue";
-import { useRoute } from "vue-router";
 import storage from "/@/libs/storage";
 import { LocalCategoryRange } from "/@/constant";
 import { Category, Stock } from "/@/views/jiucaigongshe/types/index";
 import { DataTableColumn } from "naive-ui";
+import { openLinkCodeByWindow } from "/@/libs/util";
 
 const props = defineProps({
   name: {
@@ -45,10 +45,7 @@ const columns = computed((): DataTableColumn[] => [
             cursor: "pointer",
           },
           onClick: () => {
-            window.open(
-              `http://quote.eastmoney.com/concept/${code}.html`,
-              "_blank"
-            );
+            openLinkCodeByWindow(code);
           },
         },
         code
