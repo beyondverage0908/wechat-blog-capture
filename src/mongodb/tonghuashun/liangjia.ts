@@ -13,6 +13,7 @@ import { Stock } from "@/types/jiucaigongshe";
 import dateTool from "@/lib/date";
 import stockTool from "@/works/stock/tool";
 import { getGroupStockPrice, getCurrentPrice } from "@/works/stock/price";
+import strategy from "@/mongodb/tonghuashun/strategy";
 import dayjs from "dayjs";
 const logger = createLogger("TongHuaShunDB");
 
@@ -137,8 +138,8 @@ function crossStocks(jiucaigongsheStocks: Stock[], thsLiangjiaStocks: LiangJiaSt
  */
 export const saveTargetLiangjia = async () => {
   logger.info("开始量价分析【量价齐升】【量价齐跌】");
-  const liangjiaDateRange = dateTool.recentRange(5);
-  const jcgsDateRange = dateTool.recentRange(10);
+  const liangjiaDateRange = dateTool.recentRange(strategy.ljRecentDay);
+  const jcgsDateRange = dateTool.recentRange(strategy.jcgsRecentDay);
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
   const LiangJiaModel = mongoose.model(t_ths_liangjia, LiangJiaSchema);
   const currentDate = dateTool.format();
@@ -167,7 +168,7 @@ export const saveTargetLiangjia = async () => {
   const hotTags = tags.map((item) => item.name);
 
   if (!ljqdcount) {
-    const seriesDay = 3; // 连续天数
+    const seriesDay = strategy.ljqdSeriesDay; // 连续天数
     const stocks = await queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqd);
     await TargetModel.insertMany(
       stocks.map((item) => ({
@@ -190,7 +191,7 @@ export const saveTargetLiangjia = async () => {
     );
   }
   if (!ljqsCount) {
-    const seriesDay = 3; // 连续天数
+    const seriesDay = strategy.ljqsSeriesDay; // 连续天数
     const stocks = await queryLiangJia(liangjiaDateRange, jcgsDateRange, seriesDay, THSCaptchTypeEnum.ljqs);
     await TargetModel.insertMany(
       stocks.map((item) => ({

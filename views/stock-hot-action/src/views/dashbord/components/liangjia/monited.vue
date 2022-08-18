@@ -161,7 +161,14 @@ async function startQueryLiangJiaTarget(liangJiaType: LiangJiaType) {
   isLoading.value = false;
   if (success && data) {
     pageData.tableData = data.data;
-    filterTableData.value = pageData.tableData;
+    if (isShowDrawer.value && pickDate.value) {
+      const formatDate = dayjs(pickDate.value).format("YYYY-MM-DD");
+      filterTableData.value = pageData.tableData.filter(
+        (item: any) => item.checkTime === formatDate
+      );
+    } else {
+      filterTableData.value = pageData.tableData;
+    }
   }
 }
 watch(pickDate, (nval) => {
