@@ -220,14 +220,16 @@ export const saveTargetLiangjia = async () => {
 type GetLiangJiaQueryType = {
   monit?: string;
   ljtype?: string;
+  checkTime?: string;
 };
 
 // 获取量价关系表
-export const getLiangJiaTarget = async ({ monit, ljtype }: GetLiangJiaQueryType) => {
+export const getLiangJiaTarget = async ({ monit, ljtype, checkTime }: GetLiangJiaQueryType) => {
   const TargetModel = mongoose.model(t_ths_liangjia_target, LiangJiaTargetSchema);
   const filter: GetLiangJiaQueryType = {};
   monit ? (filter["monit"] = monit) : null;
   ljtype ? (filter["ljtype"] = ljtype) : null;
+  checkTime ? (filter["checkTime"] = checkTime) : null;
   const result = await TargetModel.find(filter).sort({ checkTime: -1 }).limit(200);
   return result;
 };
@@ -279,32 +281,28 @@ export const updateLiangJiaTargetAfterDaysPrice = async (afterDay: number = 7) =
     } else if (afterDay === 14) {
       filter["price14"] = null;
     }
+    filter["checkTime"] = dateTool.format(dayjs().subtract(afterDay, "day"));
     const monitingRows = await LiangJiaTargetModel.find({ ...filter, monit: MonitType.moniting }).sort({
       checkTime: -1,
     });
+    const resultList = [];
     for await (const row of monitingRows) {
-      if (dateTool.format(dayjs().subtract(afterDay, "day")) === row.checkTime) {
-        const securityPrice = await getCurrentPrice(stockTool.formatShSzStock(row.code!));
-        let percent = null;
-        if (afterDay === 7 && securityPrice && securityPrice !== "-" && row.checkPrice) {
-          percent = Number((Number(securityPrice) - row.checkPrice) / row.checkPrice).toFixed(3);
-        }
-        if (afterDay === 14 && securityPrice && securityPrice !== "-" && row.checkPrice) {
-          percent = (Number(securityPrice) - row.checkPrice) / row.checkPrice;
-        }
-        const result = await LiangJiaTargetModel.updateMany(
-          {
-            code: row.code,
-            monit: MonitType.moniting,
-            ...filter,
-          },
-          { $set: { [`price${afterDay}`]: securityPrice, [`price${afterDay}Percent`]: percent } }
-        );
-        console.log("---", result);
+      const securityPrice = await getCurrentPrice(stockTool.formatShSzStock(row.code!));
+      let percent = null;
+      if (securityPrice && securityPrice !== "-" && row.checkPrice) {
+        percent = Number((Number(securityPrice) - row.checkPrice) / row.checkPrice).toFixed(3);
       }
+      resultList.push({ name: row.name, code: row.code, percent: percent });
+      const result = await LiangJiaTargetModel.updateOne(
+        {
+          _id: row._id,
+        },
+        { $set: { [`price${afterDay}`]: securityPrice, [`price${afterDay}Percent`]: percent } }
+      );
+      console.log("写入成功：", row.name, percent, result);
     }
     logger.info(`爬取${afterDay}天的数据-爬取成功`);
-    return "爬取成功";
+    return resultList;
   } catch (error) {
     throw error;
   }

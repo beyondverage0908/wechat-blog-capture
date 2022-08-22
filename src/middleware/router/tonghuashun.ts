@@ -82,8 +82,8 @@ router.post("/ljtarget", async (ctx) => {
 });
 // 获取量价关系
 router.get("/ljtarget", async (ctx) => {
-  const { monit, ljtype }: { monit?: string; ljtype?: string } = ctx.request.query;
-  const result = await getLiangJiaTarget({ monit, ljtype });
+  const { monit, ljtype, checkTime }: { monit?: string; ljtype?: string; checkTime?: string } = ctx.request.query;
+  const result = await getLiangJiaTarget({ monit, ljtype, checkTime });
   ctx.success({
     total: result.length || 0,
     data: result,

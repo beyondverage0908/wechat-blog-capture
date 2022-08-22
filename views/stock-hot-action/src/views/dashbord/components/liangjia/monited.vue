@@ -5,6 +5,13 @@
     >
       <div><b>监控中</b></div>
       <n-space>
+        <n-date-picker
+          clearable
+          size="small"
+          v-model:value="pickHomeDate"
+          value-format="yyyy-MM-dd"
+          type="date"
+        />
         <n-radio-group
           name="liangjiaRadioName"
           :default-value="liangJiaType"
@@ -119,7 +126,8 @@ const pageData = reactive({
 const liangJiaType = ref<LiangJiaType>(LiangJiaType.ljqd);
 const currentClickRowIndex = ref<number>();
 const isShowDrawer = ref<boolean>(false);
-const pickDate = ref<string>();
+const pickDate = ref<string | null>();
+const pickHomeDate = ref<string | null>();
 const filterTableData = ref(pageData.tableData);
 const isShowStockDetail = ref<boolean>(false);
 const stockDetailCode = ref<string>();
@@ -145,40 +153,59 @@ const handleRowClassName = (row: any, index: number) => {
 };
 
 const handleRefresh = () => {
-  startQueryLiangJiaTarget(liangJiaType.value);
+  startQueryLiangJiaTarget(liangJiaType.value, pickHomeDate.value);
 };
 const handleUpdateLiangJia = (value: LiangJiaType) => {
   liangJiaType.value = value;
   startQueryLiangJiaTarget(liangJiaType.value);
 };
 
-async function startQueryLiangJiaTarget(liangJiaType: LiangJiaType) {
+async function startQueryLiangJiaTarget(
+  liangJiaType: LiangJiaType,
+  checkTime?: string | null
+) {
+  if (checkTime) checkTime = dayjs(checkTime).format("YYYY-MM-DD");
   isLoading.value = true;
   const { data, success } = await queryLiangJiaTarget({
     monit: MonitType.moniting,
     ljtype: liangJiaType,
+    checkTime,
   });
   isLoading.value = false;
   if (success && data) {
-    pageData.tableData = data.data;
-    if (isShowDrawer.value && pickDate.value) {
-      const formatDate = dayjs(pickDate.value).format("YYYY-MM-DD");
-      filterTableData.value = pageData.tableData.filter(
-        (item: any) => item.checkTime === formatDate
-      );
+    if (isShowDrawer.value) {
+      filterTableData.value = data.data;
     } else {
-      filterTableData.value = pageData.tableData;
+      pageData.tableData = data.data;
     }
   }
 }
+watch(isShowDrawer, (nval) => {
+  if (nval) {
+    if (pickHomeDate.value) {
+      pickDate.value = pickHomeDate.value ? pickHomeDate.value : null;
+    } else {
+      startQueryLiangJiaTarget(liangJiaType.value);
+    }
+  } else {
+    pickDate.value = null;
+  }
+});
 watch(pickDate, (nval) => {
+  if (!isShowDrawer.value) return;
   if (nval) {
     const formatDate = dayjs(nval).format("YYYY-MM-DD");
-    filterTableData.value = pageData.tableData.filter(
-      (item: any) => item.checkTime === formatDate
-    );
+    startQueryLiangJiaTarget(liangJiaType.value, formatDate);
   } else {
-    filterTableData.value = pageData.tableData;
+    startQueryLiangJiaTarget(liangJiaType.value);
+  }
+});
+watch(pickHomeDate, (nval) => {
+  if (nval) {
+    const formatDate = dayjs(nval).format("YYYY-MM-DD");
+    startQueryLiangJiaTarget(liangJiaType.value, formatDate);
+  } else {
+    startQueryLiangJiaTarget(liangJiaType.value);
   }
 });
 

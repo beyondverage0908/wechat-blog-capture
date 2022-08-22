@@ -29,7 +29,9 @@ export type ColumnRowData = {
   checkPrice: string;
   uncheckPrice: string;
   price7: string;
+  price7Percent: number;
   price14: string;
+  price14Percent: number;
   checkType: CheckType;
   ljtype: LiangJiaType;
   seriesDay: string;

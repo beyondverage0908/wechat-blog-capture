@@ -269,6 +269,26 @@ export function getSimpleColumns(
       key: "price7",
     },
     {
+      title: "7涨幅",
+      key: "price7Percent",
+      width: 80,
+      render: (row) => {
+        if (row.price7Percent) {
+          return h("span", `${Number(row.price7Percent * 100).toFixed(2)}%`);
+        }
+      },
+    },
+    {
+      title: "14涨幅",
+      key: "price7Percent",
+      width: 80,
+      render: (row) => {
+        if (row.price14Percent) {
+          return h("span", `${Number(row.price14Percent * 100).toFixed(2)}%`);
+        }
+      },
+    },
+    {
       title: "14天后价格",
       key: "price14",
     },
