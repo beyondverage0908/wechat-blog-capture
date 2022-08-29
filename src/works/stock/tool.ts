@@ -3,6 +3,12 @@ const PREFIX_CODE_SIX = "6";
 const PREFIX_CODE_ZERO = "0";
 const PREFIX_CODE_THREE = "3";
 
+enum SecurityStart {
+  sh = "sh",
+  sz = "sz",
+  bj = "bj",
+}
+
 class StockTool {
   /**
    * 将证券代码转换为0.xxxx，1.xxxx的格式
@@ -31,19 +37,20 @@ class StockTool {
    */
   public formatShSzStock(code: string) {
     const lowerCode = code.toLowerCase();
-    if (!lowerCode.includes("sh") && !lowerCode.includes("sz")) {
+    if (!lowerCode.includes(SecurityStart.sh) && !lowerCode.includes(SecurityStart.sz)) {
       return lowerCode;
     }
-    if (lowerCode.startsWith("sh")) {
+    if (lowerCode.startsWith(SecurityStart.sh)) {
       return lowerCode.replace("sh", "");
     }
-    if (lowerCode.startsWith("sz")) {
+    if (lowerCode.startsWith(SecurityStart.sz)) {
       return lowerCode.replace("sz", "");
     }
     return lowerCode;
   }
   public formatShSzStocks(codes: string[]) {
-    return codes.map((code) => this.formatShSzStock(code));
+    // 运行过程中发现有些证券代码是以bj开头的，导致爬取失败，先过滤
+    return codes.filter((code) => !code.startsWith(SecurityStart.bj)).map((code) => this.formatShSzStock(code));
   }
 }
 

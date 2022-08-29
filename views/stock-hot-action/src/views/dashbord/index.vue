@@ -22,7 +22,9 @@
     </div>
     <div
       class="h-[calc(50vh)] border-1px border-solid border-gray-300 rounded-sm"
-    ></div>
+    >
+      <span class="xxx">1111111</span>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -31,3 +33,8 @@ import Liangjia from "/@/views/dashbord/components/liangjia/index.vue";
 import HotTags from "/@/views/dashbord/components/hot-tag/index.vue";
 import LiangJiaMonited from "/@/views/dashbord/components/liangjia/monited.vue";
 </script>
+<style lang="scss" scoped>
+.xxx {
+  font-size: 35px;
+}
+</style>
